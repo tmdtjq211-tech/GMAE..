@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>요한계시록 진리의 성벽</title>
     <style>
         :root {
@@ -14,9 +14,10 @@
             --panel-bg: rgba(31, 41, 55, 0.95);
             --text-light: #f3f4f6;
         }
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        
         body {
             margin: 0; padding: 0;
             font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
@@ -24,23 +25,27 @@
             display: flex; justify-content: center; align-items: center;
             height: 100dvh; overflow: hidden; box-sizing: border-box;
         }
+        
         #game-wrapper {
             position: relative; width: 100%; max-width: 900px; height: 100%;
             background: linear-gradient(to bottom, #0f172a 0%, #1e1b4b 70%, #064e3b 100%);
             overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
+        
         #top-bar {
             position: absolute; top: 0; left: 0; width: 100%; padding: 10px;
             display: flex; justify-content: space-between; align-items: center;
             box-sizing: border-box; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
             z-index: 20; font-weight: bold; font-size: 0.95rem; text-shadow: 1px 1px 2px black;
         }
+        
         .stat-group { display: flex; align-items: center; gap: 6px; }
         .hp-container {
             width: 100px; height: 16px; background-color: rgba(0,0,0,0.5);
             border: 2px solid white; border-radius: 8px; overflow: hidden;
         }
         #hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ef4444, #f87171); transition: width 0.3s ease-out; }
+        
         #game-area { position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 160px); }
         
         #time-slow-overlay {
@@ -125,11 +130,10 @@
         .btn-pause { background-color: #f59e0b; } .btn-pause:hover { background-color: #d97706; }
         .btn-quit { background-color: #ef4444; }
         
-        /* 배속 조절 버튼 스타일 */
         .speed-btn { background-color: #374151; color: #fff; padding: 4px 8px; font-size: 0.8rem; border-radius: 4px; margin-left: 2px; }
         .speed-btn.active { background-color: var(--primary); font-weight: bold; border: 1px solid #fff; }
 
-        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 50; backdrop-filter: blur(4px); padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 50; backdrop-filter: blur(4px); padding: 20px; box-sizing: border-box; overflow-y: auto; overflow-x: hidden; }
         .screen h1 { font-size: 2.2rem; margin-top: 0; margin-bottom: 15px; text-align: center; background: linear-gradient(to right, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.2; }
         .stage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 8px; margin: 15px 0; width: 100%; max-width: 450px; }
         .stage-btn { background: #1f2937; border: 2px solid #4b5563; color: white; padding: 12px 0; font-size: 1rem; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
@@ -169,11 +173,82 @@
         
         #auto-save-notice { position: absolute; top: 50px; right: 10px; background: rgba(16, 185, 129, 0.8); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; opacity: 0; transition: opacity 0.5s; z-index: 100; pointer-events: none; }
         
+        /* 세로 모드 기본 반응형 */
         @media (min-width: 901px) { body { padding: 20px 0; } #game-wrapper { border-radius: 12px; height: 90vh; } }
         @media (max-width: 400px) {
             .castle { font-size: 60px; left: 10px; } .archer { font-size: 30px; left: 60px; bottom: 70px; }
             .monster { width: 70px; height: 70px; } .monster.boss { width: 100px; height: 100px; }
             .chapter-badge { padding: 8px 10px; font-size: 1rem; } .number-input { width: 55px; }
+        }
+
+        /* 👑 모바일 가로 모드 (Landscape) 전용 완벽 대응 CSS */
+        @media (max-height: 600px) and (orientation: landscape) {
+            #quiz-panel { 
+                height: 75px; 
+                flex-direction: row; 
+                padding: 5px 15px; 
+                justify-content: space-between; 
+            }
+            #verse-display { 
+                flex: 1; 
+                text-align: left; 
+                max-height: 65px; 
+                margin-bottom: 0; 
+                padding: 0 15px 0 0; 
+                font-size: 0.9rem; 
+            }
+            .hint-text { margin-bottom: 0; font-size: 0.9rem; margin-right: 15px; }
+            .controls { 
+                flex: 0 0 auto; 
+                width: auto; 
+            }
+            #game-area { 
+                height: calc(100% - 75px); 
+            }
+            /* 스킬바를 퀴즈패널 바로 위, 왼쪽 정렬로 압축 */
+            #skill-bar { 
+                bottom: 75px; 
+                padding: 5px 10px; 
+                justify-content: flex-start; 
+                background: none; 
+            }
+            .skill-btn { 
+                width: 35px; 
+                height: 35px; 
+                font-size: 1.1rem; 
+            }
+            .skill-badge { padding: 1px 4px; font-size: 0.65rem; }
+            
+            /* 유닛들 크기 및 위치 재조정 (가로 모드용) */
+            .castle { font-size: 50px; left: 10px; bottom: 10px; }
+            .archer { font-size: 30px; left: 50px; bottom: 45px; }
+            .monster { width: 55px; height: 55px; }
+            .monster.boss { width: 90px; height: 90px; }
+            .boss-warning { font-size: 2.5rem; top: 40%; }
+            
+            /* 모달 및 메인 스크린 최적화 (스크롤 및 다단 편집) */
+            .screen { padding: 10px; }
+            .screen h1 { font-size: 1.5rem; margin-bottom: 10px; }
+            .stage-grid { grid-template-columns: repeat(5, 1fr); max-width: 600px; margin: 10px 0; gap: 5px; }
+            .stage-btn { padding: 8px 0; font-size: 0.9rem; }
+            .settings-panel { display: flex; gap: 10px; flex-wrap: nowrap; padding: 10px; max-width: 700px; align-items: center;}
+            .setting-group { flex: 1; min-width: 120px; margin-bottom: 0; }
+            .setting-group h3 { font-size: 0.9rem; margin-bottom: 4px; }
+            .radio-group label { font-size: 0.8rem; }
+            
+            .shop-content { padding: 10px 15px; max-height: 95vh; max-width: 600px; }
+            .shop-item { padding: 8px; margin-bottom: 6px; }
+            #hero-grid { max-height: 60vh; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+            .hero-icon { width: 40px; height: 40px; }
+            
+            /* 가챠 모달 가로 최적화 */
+            #gacha-timer { font-size: 2rem; margin: 5px 0; }
+            #gacha-verse-full, #gacha-verse-hidden { font-size: 0.9rem; padding: 10px; margin-bottom: 10px; }
+            #inp-gacha-guess { padding: 8px; font-size: 1rem; margin-bottom: 10px; }
+            
+            /* 상단 스탯바 압축 */
+            #top-bar { padding: 5px 10px; font-size: 0.8rem; }
+            .hp-container { width: 80px; height: 12px; }
         }
     </style>
 </head>
@@ -231,7 +306,7 @@
         <div id="hint-display" class="hint-text hidden"></div> 
         <div class="controls">
             <div id="display-chapter" class="chapter-badge">1장</div>
-            <input type="number" pattern="\d*" id="inp-verse" class="number-input" placeholder="몇 절?" autocomplete="off">
+            <input type="number" pattern="\d*" id="inp-verse" class="number-input" placeholder="몇 절?" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
             <span>절</span>
             <button id="btn-submit">발사!</button>
         </div>
@@ -240,10 +315,10 @@
     <div id="screen-start" class="screen">
         <h1>요한계시록<br>방어전</h1>
         <div style="display:flex; gap: 8px; margin-bottom: 15px; width: 100%; max-width: 450px; flex-wrap: wrap;">
-            <button id="btn-open-shop" style="background-color: var(--gold); color: #000; flex: 1; min-width: 100px;">🛒 상점</button>
-            <button id="btn-open-hero" style="background-color: #3b82f6; flex: 1; min-width: 100px;">🦸 영웅</button>
-            <button id="btn-open-gacha" style="background-color: #a855f7; flex: 1; min-width: 100px;">🔮 뽑기(100G)</button>
-            <button id="btn-info" style="background-color: #6366f1; flex: 1; min-width: 100px;">🧠 가이드</button>
+            <button id="btn-open-shop" style="background-color: var(--gold); color: #000; flex: 1; min-width: 80px;">🛒 상점</button>
+            <button id="btn-open-hero" style="background-color: #3b82f6; flex: 1; min-width: 80px;">🦸 영웅</button>
+            <button id="btn-open-gacha" style="background-color: #a855f7; flex: 1; min-width: 80px;">🔮 뽑기</button>
+            <button id="btn-info" style="background-color: #6366f1; flex: 1; min-width: 80px;">🧠 가이드</button>
         </div>
         <h3 style="margin:0 0 5px 0; color: #fff;">스테이지 선택</h3>
         <div class="stage-grid" id="stage-grid"></div>
@@ -264,7 +339,7 @@
                 </div>
             </div>
             <div class="setting-group">
-                <h3>말씀 출제 범위</h3>
+                <h3>말씀 범위</h3>
                 <select id="sel-range" class="custom-sel">
                     <option value="1">1장</option>
                     <option value="2">2장</option>
@@ -311,7 +386,7 @@
     <div id="hero-modal" class="screen hidden" style="z-index: 60;">
         <div class="shop-content" style="max-width: 500px; padding: 15px;">
             <h2 style="color: var(--gold); margin-top: 0; margin-bottom: 15px;">🦸 영웅 관리</h2>
-            <div id="hero-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; max-height: 55vh; overflow-y: auto;"></div>
+            <div id="hero-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; overflow-y: auto;"></div>
             <button id="btn-close-hero" style="background: #4b5563; width: 100%;">닫기</button>
         </div>
     </div>
@@ -327,7 +402,7 @@
             <div id="gacha-guess-ui" class="hidden">
                 <p style="color: #10b981; font-weight: bold; font-size: 1.1rem; margin-bottom: 10px;">빈칸에 들어갈 단어는 무엇일까요?</p>
                 <div id="gacha-verse-hidden" style="background: #111; padding: 15px; border-radius: 8px; font-size: 1.1rem; line-height: 1.6; margin-bottom: 15px; border: 1px solid #10b981; color: var(--gold);"></div>
-                <input type="text" id="inp-gacha-guess" style="width: 80%; padding: 12px; font-size: 1.2rem; margin-bottom: 15px; text-align: center; border-radius: 8px; border: 2px solid #a855f7; background: #374151; color: white;" placeholder="단어 입력" autocomplete="off">
+                <input type="text" id="inp-gacha-guess" style="width: 80%; padding: 12px; font-size: 1.2rem; margin-bottom: 15px; text-align: center; border-radius: 8px; border: 2px solid #a855f7; background: #374151; color: white;" placeholder="단어 입력" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 <button id="btn-submit-gacha" style="width: 100%; background: #a855f7; font-size: 1.2rem; padding: 12px; font-weight: bold;">정답 제출</button>
             </div>
             <button id="btn-close-gacha" style="margin-top: 15px; background: #4b5563; width: 100%;">취소 및 닫기</button>
@@ -379,7 +454,7 @@
         {c:1, v:9, t:"나 요한은 너희 형제요 예수의 환난과 나라와 참음에 동참하는 자라 하나님의 말씀과 예수의 증거를 인하여 밧모라 하는 섬에 있었더니"},
         {c:1, v:10, t:"주의 날에 내가 성령에 감동하여 내 뒤에서 나는 나팔 소리 같은 큰 음성을 들으니"},
         {c:1, v:11, t:"가로되 너 보는 것을 책에 써서 에베소, 서머나, 버가모, 두아디라, 사데, 빌라델비아, 라오디게아 일곱 교회에 보내라 하시기로"},
-        {c:1, v:12, t:"몸을 돌이켜 나더러 말한 음성을 알아 보려고 하여 돌이킬 때에 일곱 금 촛대를 보았는데"},
+        {c:1, v:12, t:"몸 돌이켜 나더러 말한 음성을 알아 보려고 하여 돌이킬 때에 일곱 금 촛대를 보았는데"},
         {c:1, v:13, t:"촛대 사이에 인자 같은 이가 발에 끌리는 옷을 입고 가슴에 금띠를 띠고"},
         {c:1, v:14, t:"그 머리와 털의 희기가 흰 양털 같고 눈 같으며 그의 눈은 불꽃 같고"},
         {c:1, v:15, t:"그의 발은 풀무에 단련한 빛난 주석 같고 그의 음성은 많은 물 소리와 같으며"},
@@ -508,7 +583,7 @@
     const badgeTrump = document.getElementById('badge-trump');
     const badgeBowl = document.getElementById('badge-bowl');
 
-    // --- 영웅 캐릭터 시스템 (새로운 액티브/전투 스킬 5종 적용 완료) ---
+    // --- 영웅 캐릭터 시스템 ---
     const CHARACTERS = [
         { id: 'c1', name: '은혜의 수호자', desc: '스테이지별 처치 목표 몬스터 수 절반 감소', img: 'images/char1.png', x: 25, y: 130, w: 70, h: 70 },
         { id: 'c2', name: '선지자의 눈', desc: '실전 모드 시 초반 연속 3번 정답 힌트 제공', img: 'images/char2.png', x: 25, y: 130, w: 70, h: 70 },
@@ -536,7 +611,6 @@
     ];
 
     // --- Save System V5 ---
-    let oldSave = JSON.parse(localStorage.getItem('revDefSaveV4'));
     let defaultSave = { unlockedStage: 1, gold: 0, attackPower: 1, slowItems: 3, lightnings: 0, trumpets: 0, bowls: 0, characters: [], equippedChar: null };
     let saveData;
     try { 
@@ -544,7 +618,7 @@
     } catch(e) { 
         saveData = null; 
     }
-    if (!saveData) saveData = oldSave ? { ...defaultSave, ...oldSave } : defaultSave;
+    if (!saveData) saveData = defaultSave;
     if (!saveData.characters) { saveData.characters = []; saveData.equippedChar = null; }
     if (typeof saveData.unlockedStage !== 'number' || isNaN(saveData.unlockedStage)) saveData.unlockedStage = 1;
 
@@ -1110,7 +1184,10 @@
         hpBg.appendChild(hpFill); 
         el.appendChild(hpBg);
         
-        const yOffset = 20 + Math.random() * 40; 
+        // 가로모드 시 높이 압축 대응
+        const isLandscape = window.innerHeight < 600;
+        const yOffset = isLandscape ? 5 + Math.random() * 20 : 20 + Math.random() * 40; 
+        
         el.style.bottom = yOffset + 'px'; 
         const startX = gameArea.clientWidth; 
         el.style.left = startX + 'px'; 
@@ -1383,7 +1460,7 @@
             
             if(combo > 1) { 
                 let buffTxt = damageMultiplier > 1 ? ` (DMG x${damageMultiplier})` : ''; 
-                showFloatingText(`${combo} COMBO!${buffTxt}`, gameArea.clientWidth/2, 250, 'combo-text'); 
+                showFloatingText(`${combo} COMBO!${buffTxt}`, gameArea.clientWidth/2, gameArea.clientHeight/2, 'combo-text'); 
             }
             
             grace = Math.min(100, grace + 15 + (combo * 2));
@@ -1396,7 +1473,7 @@
                 let rangeLimit = CASTLE_X + 250; 
                 targets = activeMonsters.filter(m => m.x <= rangeLimit).sort((a, b) => a.x - b.x).slice(0, weapon.count); 
                 if (targets.length === 0 && activeMonsters.length > 0) {
-                    showFloatingText("사거리 밖입니다!", gameArea.clientWidth/2, 180); 
+                    showFloatingText("사거리 밖입니다!", gameArea.clientWidth/2, gameArea.clientHeight/2 - 20); 
                 }
             } else if (chosenWeapon === 'staff') { 
                 targets = activeMonsters.sort((a, b) => b.mhp - a.mhp || a.x - b.x).slice(0, weapon.count); 
@@ -1445,7 +1522,7 @@
             }, 300);
             
             monsters.forEach(m => { if(m.active) m.x -= 40; }); 
-            showFloatingText("오답!", gameArea.clientWidth/2, 100); 
+            showFloatingText("오답!", gameArea.clientWidth/2, gameArea.clientHeight/2 - 50); 
             
             inpVerse.value = ''; 
             inpVerse.focus();
@@ -1453,10 +1530,10 @@
     }
 
     function useGraceSkill() { 
-        if (grace < 100) { showFloatingText("은혜 부족!", gameArea.clientWidth/2, 150); return; } 
+        if (grace < 100) { showFloatingText("은혜 부족!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } 
         grace = 0; 
         updateInGameUI(); 
-        showFloatingText("성령의 폭풍!!", gameArea.clientWidth/2, 300); 
+        showFloatingText("성령의 폭풍!!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 50); 
         
         let originalBg = document.getElementById('game-wrapper').style.background; 
         document.getElementById('game-wrapper').style.background = 'rgba(251, 191, 36, 0.5)'; 
@@ -1472,25 +1549,25 @@
     }
     
     function useTimeSlow() { 
-        if (saveData.slowItems <= 0) { showFloatingText("모래시계 없음!", gameArea.clientWidth/2, 150); return; } 
+        if (saveData.slowItems <= 0) { showFloatingText("모래시계 없음!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } 
         if (slowTimer > 0) return; 
         saveData.slowItems--; 
         saveGame(); 
         renderTopStats(); 
         slowTimer = 5.0; 
         document.getElementById('time-slow-overlay').style.display = 'block'; 
-        showFloatingText("시간 지연!", gameArea.clientWidth/2, 200, 'combo-text', '#60a5fa'); 
+        showFloatingText("시간 지연!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 20, 'combo-text', '#60a5fa'); 
     }
     
     function useLightning() { 
-        if (saveData.lightnings <= 0) { showFloatingText("번개 없음!", gameArea.clientWidth/2, 150); return; } 
+        if (saveData.lightnings <= 0) { showFloatingText("번개 없음!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } 
         let activeMonsters = monsters.filter(m => m.active).sort((a, b) => a.x - b.x); 
         if (activeMonsters.length === 0) return; 
         
         saveData.lightnings--; 
         saveGame(); 
         renderTopStats(); 
-        showFloatingText("⚡ 심판의 번개!", gameArea.clientWidth/2, 250, 'combo-text', '#fde047'); 
+        showFloatingText("⚡ 심판의 번개!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 20, 'combo-text', '#fde047'); 
         
         let targets = activeMonsters.slice(0, 3); 
         targets.forEach(m => { 
@@ -1500,14 +1577,14 @@
     }
     
     function useTrumpet() { 
-        if (saveData.trumpets <= 0) { showFloatingText("나팔 없음!", gameArea.clientWidth/2, 150); return; } 
+        if (saveData.trumpets <= 0) { showFloatingText("나팔 없음!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } 
         let activeMonsters = monsters.filter(m => m.active); 
         if (activeMonsters.length === 0) return; 
         
         saveData.trumpets--; 
         saveGame(); 
         renderTopStats(); 
-        showFloatingText("🎺 나팔 소리!", gameArea.clientWidth/2, 250, 'combo-text', '#fcd34d'); 
+        showFloatingText("🎺 나팔 소리!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 20, 'combo-text', '#fcd34d'); 
         
         activeMonsters.forEach(m => { 
             m.x = gameArea.clientWidth - 50; 
@@ -1516,14 +1593,14 @@
     }
     
     function useBowl() { 
-        if (saveData.bowls <= 0) { showFloatingText("대접 없음!", gameArea.clientWidth/2, 150); return; } 
+        if (saveData.bowls <= 0) { showFloatingText("대접 없음!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } 
         let activeMonsters = monsters.filter(m => m.active); 
         if (activeMonsters.length === 0) return; 
         
         saveData.bowls--; 
         saveGame(); 
         renderTopStats(); 
-        showFloatingText("🥣 진노의 대접!!", gameArea.clientWidth/2, 300, 'combo-text', '#ef4444'); 
+        showFloatingText("🥣 진노의 대접!!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 20, 'combo-text', '#ef4444'); 
         
         let originalBg = document.getElementById('game-wrapper').style.background; 
         document.getElementById('game-wrapper').style.background = 'rgba(239, 68, 68, 0.4)'; 
