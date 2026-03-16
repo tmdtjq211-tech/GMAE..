@@ -495,7 +495,6 @@
     const comboMultTxt = document.getElementById('combo-multiplier');
     const equippedCharEl = document.getElementById('equipped-char-el');
     
-    // 복구된 누락 변수들! (중요)
     const badgeSlow = document.getElementById('badge-slow');
     const badgeLight = document.getElementById('badge-light');
     const badgeTrump = document.getElementById('badge-trump');
@@ -725,9 +724,10 @@
         document.getElementById('gacha-modal').classList.add('hidden');
     }
 
+    // 💡 BUG FIX: 'display: block' 대신 'classList.remove('hidden')' 사용
     function startGachaReadMode() {
-        document.getElementById('gacha-read-ui').style.display = 'block';
-        document.getElementById('gacha-guess-ui').style.display = 'none';
+        document.getElementById('gacha-read-ui').classList.remove('hidden');
+        document.getElementById('gacha-guess-ui').classList.add('hidden');
         document.getElementById('gacha-verse-full').innerText = gachaVerseText;
         
         let timeLeft = 10;
@@ -740,9 +740,10 @@
         }, 1000);
     }
 
+    // 💡 BUG FIX: 'display: none' 대신 'classList.add('hidden')' 사용
     function startGachaGuessMode() {
-        document.getElementById('gacha-read-ui').style.display = 'none';
-        document.getElementById('gacha-guess-ui').style.display = 'block';
+        document.getElementById('gacha-read-ui').classList.add('hidden');
+        document.getElementById('gacha-guess-ui').classList.remove('hidden');
         
         let hiddenText = gachaVerseText.split(" ").map(w => {
             if (w.replace(/[^\w\s가-힣]/g, '') === gachaWord) return "[ 빈 칸 ]";
