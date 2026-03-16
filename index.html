@@ -32,14 +32,15 @@
             overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
         
+        /* 👑 상단 UI 바 (세로 모드 짤림 방지 완벽 적용) */
         #top-bar {
-            position: absolute; top: 0; left: 0; width: 100%; padding: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-sizing: border-box; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
-            z-index: 20; font-weight: bold; font-size: 0.95rem; text-shadow: 1px 1px 2px black;
+            position: absolute; top: 0; left: 0; width: 100%; padding: 8px 10px;
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 5px 10px;
+            box-sizing: border-box; background: rgba(0,0,0,0.85);
+            z-index: 20; font-weight: bold; font-size: 0.9rem; text-shadow: 1px 1px 2px black;
         }
         
-        .stat-group { display: flex; align-items: center; gap: 6px; }
+        .stat-group { display: flex; align-items: center; gap: 4px; }
         .hp-container {
             width: 100px; height: 16px; background-color: rgba(0,0,0,0.5);
             border: 2px solid white; border-radius: 8px; overflow: hidden;
@@ -126,11 +127,11 @@
         button { background-color: var(--primary); color: white; border: none; padding: 8px 15px; font-size: 1rem; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background-color 0.2s, transform 0.1s; box-shadow: 0 4px 6px rgba(0,0,0,0.3); white-space: nowrap; }
         button:hover { background-color: var(--primary-hover); filter: brightness(1.1); }
         button:active { transform: translateY(2px); box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
-        .btn-pause, .btn-quit { padding: 4px 8px; font-size: 0.8rem; margin-left: 5px; }
+        .btn-pause, .btn-quit { padding: 4px 8px; font-size: 0.8rem; margin-left: 2px; }
         .btn-pause { background-color: #f59e0b; } .btn-pause:hover { background-color: #d97706; }
         .btn-quit { background-color: #ef4444; }
         
-        .speed-btn { background-color: #374151; color: #fff; padding: 4px 8px; font-size: 0.8rem; border-radius: 4px; margin-left: 2px; }
+        .speed-btn { background-color: #374151; color: #fff; padding: 4px 8px; font-size: 0.85rem; border-radius: 4px; margin-left: 2px; }
         .speed-btn.active { background-color: var(--primary); font-weight: bold; border: 1px solid #fff; }
 
         .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 50; backdrop-filter: blur(4px); padding: 20px; box-sizing: border-box; overflow-y: auto; overflow-x: hidden; }
@@ -174,15 +175,30 @@
         #auto-save-notice { position: absolute; top: 50px; right: 10px; background: rgba(16, 185, 129, 0.8); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; opacity: 0; transition: opacity 0.5s; z-index: 100; pointer-events: none; }
         
         /* =========================================================================
-           📱 기본 세로 모드(Portrait) 및 작은 화면 최적화
+           📱 기본 세로 모드(Portrait) 및 작은 화면 최적화 (잘림 완벽 해결)
            ========================================================================= */
         @media (min-width: 901px) { body { padding: 20px 0; } #game-wrapper { border-radius: 12px; height: 90vh; } }
-        @media (max-width: 400px) {
-            .castle { font-size: 55px; left: 10px; } .archer { font-size: 30px; left: 55px; bottom: 70px; }
-            .monster { width: 65px; height: 65px; } .monster.boss { width: 100px; height: 100px; }
-            .chapter-badge { padding: 6px 10px; font-size: 1rem; } .number-input { width: 55px; padding: 6px; }
+        
+        @media (max-width: 480px) {
+            /* 상단 바 세로 모드 최적화 */
+            #top-bar { font-size: 0.8rem; padding: 6px; justify-content: space-around; gap: 4px; }
+            .hp-container { width: 55px; height: 12px; }
+            .speed-btn { padding: 4px 6px; font-size: 0.75rem; letter-spacing: -0.5px; }
+            .btn-pause, .btn-quit { padding: 4px 6px; font-size: 0.75rem; margin-left: 2px; }
+            #in-game-stats { font-size: 0.75rem; }
+            
+            /* 유닛 크기 조절 */
+            .castle { font-size: 55px; left: 10px; bottom: 20px; } 
+            .archer { font-size: 30px; left: 55px; bottom: 70px; }
+            .equipped-char { transform: scale(0.8); transform-origin: bottom left; left: 15px !important; bottom: 100px !important;}
+            .monster { width: 65px; height: 65px; } 
+            .monster.boss { width: 100px; height: 100px; }
+            
+            /* 하단 UI 조절 */
+            .chapter-badge { padding: 6px 10px; font-size: 1rem; } 
+            .number-input { width: 55px; padding: 6px; }
             #quiz-panel { height: 150px; }
-            #skill-bar { bottom: 150px; }
+            #skill-bar { bottom: 150px; gap: 8px; }
             #game-area { height: calc(100% - 150px); }
             .skill-btn { width: 40px; height: 40px; font-size: 1.1rem; }
         }
@@ -191,7 +207,11 @@
            👑 모바일 가로 모드 (Landscape) 전용 레이아웃 완벽 대응
            ========================================================================= */
         @media screen and (max-height: 600px) and (orientation: landscape) {
-            /* 퀴즈 패널을 하단 1줄로 압축 */
+            /* 상단 바 가로 확장 */
+            #top-bar { font-size: 0.8rem; padding: 5px 10px; flex-wrap: nowrap; }
+            .hp-container { width: 80px; height: 12px; }
+            
+            /* 퀴즈 패널을 하단 1줄로 얇게 압축 */
             #quiz-panel { 
                 height: 65px; 
                 flex-direction: row; 
@@ -212,10 +232,10 @@
             .number-input { width: 60px; padding: 5px; }
             button { padding: 6px 12px; font-size: 0.9rem; }
             
-            /* 게임 영역 확대 */
+            /* 게임 영역 높이 확대 */
             #game-area { height: calc(100% - 65px); }
             
-            /* 스킬바를 퀴즈패널 바로 위, 화면 좌측 하단에 아담하게 배치 */
+            /* 스킬바를 퀴즈패널 바로 위, 화면 좌측 하단에 작게 배치 */
             #skill-bar { 
                 bottom: 65px; 
                 height: 50px;
@@ -229,11 +249,12 @@
             /* 유닛들 크기 및 위치 재조정 (세로 공간 확보) */
             .castle { font-size: 45px; left: 10px; bottom: 10px; }
             .archer { font-size: 25px; left: 45px; bottom: 40px; }
+            .equipped-char { transform: scale(0.6); transform-origin: bottom left; left: 10px !important; bottom: 65px !important;}
             .monster { width: 50px; height: 50px; bottom: 10px; }
             .monster.boss { width: 80px; height: 80px; bottom: 10px; }
             .boss-warning { font-size: 2.5rem; top: 40%; }
             
-            /* 모달 및 메인 스크린 최적화 (스크롤 되도록) */
+            /* 모달 및 메인 스크린 최적화 (스크롤 되도록 압축) */
             .screen { padding: 10px; }
             .screen h1 { font-size: 1.5rem; margin-bottom: 10px; }
             .stage-grid { grid-template-columns: repeat(5, 1fr); max-width: 600px; margin: 10px 0; gap: 5px; }
@@ -252,32 +273,31 @@
             #gacha-timer { font-size: 2rem; margin: 5px 0; }
             #gacha-verse-full, #gacha-verse-hidden { font-size: 0.9rem; padding: 10px; margin-bottom: 10px; }
             #inp-gacha-guess { padding: 8px; font-size: 1rem; margin-bottom: 10px; }
-            
-            /* 상단 스탯바 압축 */
-            #top-bar { padding: 5px 10px; font-size: 0.8rem; }
-            .hp-container { width: 80px; height: 12px; }
         }
     </style>
 </head>
 <body>
 <div id="game-wrapper">
     <div id="top-bar">
-        <div class="stat-group">
-            <span title="성 체력">🏰</span>
-            <div class="hp-container"><div id="hp-bar"></div></div>
+        <div style="display:flex; gap: 8px; align-items: center;">
+            <div class="stat-group">
+                <span title="성 체력">🏰</span>
+                <div class="hp-container"><div id="hp-bar"></div></div>
+            </div>
+            <div class="stat-group" style="display: none;" id="in-game-stats">
+                <span><span id="weapon-txt" style="color:#10b981;">활</span>(<span id="atk-txt" style="color:var(--gold);">1</span>)</span>
+                <span id="combo-multiplier-container" class="hidden"><span id="combo-multiplier" style="color:#f59e0b; font-weight:bold;">x1.0</span></span>
+                <span style="margin-left: 4px;">🎯<span id="progress-txt">0/10</span></span>
+            </div>
         </div>
-        <div class="stat-group" style="display: none;" id="in-game-stats">
-            <span style="font-size:0.85rem;"><span id="weapon-txt" style="color:#10b981;">활</span>(<span id="atk-txt" style="color:var(--gold);">1</span>)</span> |
-            <span style="font-size:0.85rem;" id="combo-multiplier-container" class="hidden"><span id="combo-multiplier" style="color:#f59e0b; font-weight:bold;">x1.0</span> | </span>
-            <span style="font-size:0.85rem;">처치:<span id="progress-txt">0/10</span></span>
-        </div>
-        <div class="stat-group">
-            <span style="color: var(--gold); font-weight: bold; margin-right: 5px;">💰 <span id="gold-txt">0</span></span>
+        
+        <div style="display:flex; gap: 4px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+            <span style="color: var(--gold); font-weight: bold; margin-right: 4px;">💰<span id="gold-txt">0</span></span>
             
             <div id="speed-controls" class="hidden" style="display: flex; gap: 2px;">
                 <button id="btn-speed-05" class="speed-btn" onclick="setGameSpeed(0.5)">0.5x</button>
-                <button id="btn-speed-10" class="speed-btn active" onclick="setGameSpeed(1.0)">1.0x</button>
-                <button id="btn-speed-20" class="speed-btn" onclick="setGameSpeed(2.0)">2.0x</button>
+                <button id="btn-speed-10" class="speed-btn active" onclick="setGameSpeed(1.0)">1x</button>
+                <button id="btn-speed-20" class="speed-btn" onclick="setGameSpeed(2.0)">2x</button>
             </div>
 
             <button id="btn-pause" class="btn-pause hidden">정지</button>
@@ -456,7 +476,7 @@
         {c:1, v:4, t:"요한은 아시아에 있는 일곱 교회에 편지하노니 이제도 계시고 전에도 계시고 장차 오실 이와 그 보좌 앞에 일곱 영과"},
         {c:1, v:5, t:"또 충성된 증인으로 죽은 자들 가운데서 먼저 나시고 땅의 임금들의 머리가 되신 예수 그리스도로 말미암아 은혜와 평강이 너희에게 있기를 원하노라 우리를 사랑하사 그의 피로 우리 죄에서 우리를 해방하시고"},
         {c:1, v:6, t:"그 아버지 하나님을 위하여 우리를 나라와 제사장으로 삼으신 그에게 영광과 능력이 세세토록 있기를 원하노라 아멘"},
-        {c:1, v:7, t:"볼찌어다 구름을 타고 오시리라 각인의 눈이 그를 보겠고 그를 찌른 자들도 볼터이요 땅에 있는 모든 족속이 정를 인하여 애곡하리니 그러하리라 아멘"},
+        {c:1, v:7, t:"볼찌어다 구름을 타고 오시리라 각인의 눈이 그를 보겠고 그를 찌른 자들도 볼터이요 땅에 있는 모든 족속이 그를 인하여 애곡하리니 그러하리라 아멘"},
         {c:1, v:8, t:"주 하나님이 가라사대 나는 알파와 오메가라 이제도 있고 전에도 있었고 장차 올 자요 전능한 자라 하시더라"},
         {c:1, v:9, t:"나 요한은 너희 형제요 예수의 환난과 나라와 참음에 동참하는 자라 하나님의 말씀과 예수의 증거를 인하여 밧모라 하는 섬에 있었더니"},
         {c:1, v:10, t:"주의 날에 내가 성령에 감동하여 내 뒤에서 나는 나팔 소리 같은 큰 음성을 들으니"},
@@ -538,7 +558,7 @@
         {c:5, v:4, t:"이 책을 펴거나 보거나 하기에 합당한 자가 보이지 않기로 내가 크게 울었더니"},
         {c:5, v:5, t:"장로 중에 하나가 내게 말하되 울지 말라 유대 지파의 사자 다윗의 뿌리가 이기었으니 이 책과 그 일곱 인을 떼시리라 하더라"},
         {c:5, v:6, t:"내가 또 보니 보좌와 네 생물과 장로들 사이에 어린 양이 섰는데 일찍 죽임을 당한것 같더라 일곱 뿔과 일곱 눈이 있으니 이 눈은 온 땅에 보내심을 입은 하나님의 일곱 영이더라"},
-        {c:5, v:7, t:"어린 양이 나아와서 보좌에 앉으신 이의 오른손에서 책을 취하시니라"},
+        {c:5, v:7, t:"어 양이 나아와서 보좌에 앉으신 이의 오른손에서 책을 취하시니라"},
         {c:5, v:8, t:"책을 취하시매 네 생물과 이십 사 장로들이 어린 양 앞에 엎드려 각각 거문고와 향이 가득한 금 대접을 가졌으니 이 향은 성도의 기도들이라"},
         {c:5, v:9, t:"새 노래를 노래하여 가로되 책을 가지시고 그 인봉을 떼기에 합당하시도다 일찍 죽임을 당하사 각 족속과 방언과 백성과 나라 가운데서 사람들을 피로 사서 하나님께 드리시고"},
         {c:5, v:10, t:"저희로 우리 하나님 앞에서 나라와 제사장을 삼으셨으니 저희가 땅에서 왕노릇하리로다 하더라"},
@@ -1191,9 +1211,8 @@
         hpBg.appendChild(hpFill); 
         el.appendChild(hpBg);
         
-        // 가로모드/세로모드 동적 몬스터 높이 조절
         const isLandscape = window.innerHeight < 600;
-        const yOffset = isLandscape ? 10 + Math.random() * 20 : 20 + Math.random() * 40; 
+        const yOffset = isLandscape ? 5 + Math.random() * 20 : 20 + Math.random() * 40; 
         
         el.style.bottom = yOffset + 'px'; 
         const startX = gameArea.clientWidth; 
