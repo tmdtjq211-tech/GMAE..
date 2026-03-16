@@ -358,7 +358,7 @@
 </div>
 
 <script>
-    // --- Data: 요한계시록 1~6장 전체 데이터 (원본 복구 완료) ---
+    // --- Data: 요한계시록 1~6장 전체 데이터 ---
     const bibleData = [
         {c:1, v:1, t:"예수 그리스도의 계시라 이는 하나님이 그에게 주사 반드시 속히 될 일을 그 종들에게 보이시려고 그 천사를 그 종 요한에게 보내어 지시하신 것이라"},
         {c:1, v:2, t:"요한은 하나님의 말씀과 예수 그리스도의 증거 곧 자기의 본 것을 다 증거하였느니라"},
@@ -475,6 +475,32 @@
         {c:6, v:17, t:"그들의 진노의 큰 날이 이르렀으니 누가 능히 서리요 하더라"}
     ];
 
+    // --- DOM Elements ---
+    const gameArea = document.getElementById('game-area');
+    const verseDisplay = document.getElementById('verse-display');
+    const hintDisplay = document.getElementById('hint-display');
+    const displayChapter = document.getElementById('display-chapter');
+    const inpVerse = document.getElementById('inp-verse');
+    const btnSubmit = document.getElementById('btn-submit');
+    const hpBar = document.getElementById('hp-bar');
+    const graceFill = document.getElementById('grace-fill');
+    const archer = document.getElementById('archer');
+    const castle = document.getElementById('castle');
+    const stageGrid = document.getElementById('stage-grid');
+    const goldTxt = document.getElementById('gold-txt');
+    const atkTxt = document.getElementById('atk-txt');
+    const weaponTxt = document.getElementById('weapon-txt');
+    const progressTxt = document.getElementById('progress-txt');
+    const comboMultContainer = document.getElementById('combo-multiplier-container');
+    const comboMultTxt = document.getElementById('combo-multiplier');
+    const equippedCharEl = document.getElementById('equipped-char-el');
+    
+    // 복구된 누락 변수들! (중요)
+    const badgeSlow = document.getElementById('badge-slow');
+    const badgeLight = document.getElementById('badge-light');
+    const badgeTrump = document.getElementById('badge-trump');
+    const badgeBowl = document.getElementById('badge-bowl');
+
     // --- 영웅 캐릭터 시스템 (깃허브 이미지 연동용 세팅) ---
     const CHARACTERS = [
         { id: 'c1', name: '은혜의 수호자', desc: '스테이지별 처치 목표 몬스터 수 절반 감소', img: 'images/char1.png', x: 25, y: 130, w: 70, h: 70 },
@@ -502,12 +528,16 @@
         { id: 10, target: 60, hpBase: 300, spdBase: 65 }
     ];
 
-    // --- Save System V5 (캐릭터 정보 추가) ---
+    // --- Save System V5 (세이브 파일 에러 방지 처리 추가) ---
     let oldSave = JSON.parse(localStorage.getItem('revDefSaveV4'));
     let defaultSave = { unlockedStage: 1, gold: 0, attackPower: 1, slowItems: 3, lightnings: 0, trumpets: 0, bowls: 0, characters: [], equippedChar: null };
-    let saveData = JSON.parse(localStorage.getItem('revDefSaveV5')) || oldSave || defaultSave;
-    if (!saveData.characters) { saveData.characters = []; saveData.equippedChar = null; }
     
+    let saveData;
+    try { saveData = JSON.parse(localStorage.getItem('revDefSaveV5')); } catch(e) { saveData = null; }
+    if (!saveData) saveData = oldSave ? { ...defaultSave, ...oldSave } : defaultSave;
+    if (!saveData.characters) { saveData.characters = []; saveData.equippedChar = null; }
+    if (typeof saveData.unlockedStage !== 'number' || isNaN(saveData.unlockedStage)) saveData.unlockedStage = 1;
+
     function saveGame() { localStorage.setItem('revDefSaveV5', JSON.stringify(saveData)); }
     function showAutoSaveNotice() { const notice = document.getElementById('auto-save-notice'); notice.style.opacity = 1; setTimeout(() => notice.style.opacity = 0, 2000); }
     
@@ -545,26 +575,6 @@
     // --- 가챠 Variables ---
     let gachaTimer = 0, gachaInterval;
     let gachaWord = "", gachaVerseText = "";
-
-    // --- DOM Elements ---
-    const gameArea = document.getElementById('game-area');
-    const verseDisplay = document.getElementById('verse-display');
-    const hintDisplay = document.getElementById('hint-display');
-    const displayChapter = document.getElementById('display-chapter');
-    const inpVerse = document.getElementById('inp-verse');
-    const btnSubmit = document.getElementById('btn-submit');
-    const hpBar = document.getElementById('hp-bar');
-    const graceFill = document.getElementById('grace-fill');
-    const archer = document.getElementById('archer');
-    const castle = document.getElementById('castle');
-    const stageGrid = document.getElementById('stage-grid');
-    const goldTxt = document.getElementById('gold-txt');
-    const atkTxt = document.getElementById('atk-txt');
-    const weaponTxt = document.getElementById('weapon-txt');
-    const progressTxt = document.getElementById('progress-txt');
-    const comboMultContainer = document.getElementById('combo-multiplier-container');
-    const comboMultTxt = document.getElementById('combo-multiplier');
-    const equippedCharEl = document.getElementById('equipped-char-el');
 
     // --- Initialization ---
     function init() {
