@@ -23,15 +23,13 @@
             font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
             background-color: #000; color: var(--text-light);
             display: flex; justify-content: center; align-items: center;
-            height: 100dvh; width: 100dvw; overflow: hidden; box-sizing: border-box;
-            position: relative;
+            height: 100dvh; overflow: hidden; box-sizing: border-box;
         }
         
         #game-wrapper {
             position: relative; width: 100%; max-width: 900px; height: 100%;
             background: linear-gradient(to bottom, #0f172a 0%, #1e1b4b 70%, #064e3b 100%);
             overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8);
-            transition: transform 0.3s ease;
         }
         
         #top-bar {
@@ -48,7 +46,7 @@
         }
         #hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ef4444, #f87171); transition: width 0.3s ease-out; }
         
-        #game-area { position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 160px); }
+        #game-area { position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 170px); }
         
         #time-slow-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -73,8 +71,8 @@
         }
         @keyframes flashWarning { 0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 0.3; transform: translate(-50%, -50%) scale(1.1); } }
         
-        .castle { position: absolute; left: 20px; bottom: 20px; font-size: 80px; z-index: 10; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.5)); transition: transform 0.1s; }
-        .archer { position: absolute; left: 80px; bottom: 90px; font-size: 40px; z-index: 11; transition: transform 0.1s; }
+        .castle { position: absolute; left: 20px; bottom: 20px; font-size: 70px; z-index: 10; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.5)); transition: transform 0.1s; }
+        .archer { position: absolute; left: 70px; bottom: 80px; font-size: 35px; z-index: 11; transition: transform 0.1s; }
         
         .equipped-char {
             position: absolute; z-index: 12;
@@ -83,11 +81,11 @@
         }
         
         .monster { 
-            position: absolute; bottom: 20px; z-index: 5; width: 90px; height: 90px;
+            position: absolute; bottom: 20px; z-index: 5; width: 80px; height: 80px;
             background-size: contain; background-repeat: no-repeat; background-position: center bottom;
             transition: filter 0.2s; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
         }
-        .monster.boss { width: 140px; height: 140px; z-index: 6; filter: drop-shadow(0 0 10px red); }
+        .monster.boss { width: 130px; height: 130px; z-index: 6; filter: drop-shadow(0 0 10px red); }
         .monster-hp-bg {
             position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
             width: 80%; height: 6px; background: rgba(0,0,0,0.7);
@@ -97,7 +95,7 @@
         .arrow { position: absolute; font-size: 24px; z-index: 12; pointer-events: none; }
         
         #skill-bar {
-            position: absolute; bottom: 160px; left: 0; width: 100%;
+            position: absolute; bottom: 170px; left: 0; width: 100%;
             display: flex; justify-content: center; gap: 12px; padding: 10px 0; box-sizing: border-box;
             background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%); z-index: 15; display: none;
         }
@@ -113,19 +111,19 @@
         #btn-skill-grace span { position: relative; z-index: 1; }
         
         #quiz-panel {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 160px; background: var(--panel-bg); border-top: 3px solid #374151;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 170px; background: var(--panel-bg); border-top: 3px solid #374151;
             display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; z-index: 20; backdrop-filter: blur(5px); transition: border-color 0.3s;
         }
         #verse-display { font-size: 1rem; line-height: 1.4; text-align: center; margin-bottom: 8px; padding: 0 10px; width: 100%; box-sizing: border-box; min-height: 45px; max-height: 65px; overflow-y: auto; color: var(--gold); font-weight: 500; word-break: keep-all; }
         .hint-text { color: #10b981; font-weight: bold; font-size: 1rem; margin-bottom: 8px; text-shadow: 1px 1px 2px black; }
-        .controls { display: flex; gap: 10px; align-items: center; justify-content: center; width: 100%; }
-        .chapter-badge { background-color: var(--primary); color: white; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 1.2rem; border: 2px solid #6366f1; box-shadow: 0 0 10px rgba(79, 70, 229, 0.4); white-space: nowrap; }
-        .number-input { width: 70px; padding: 10px 5px; font-size: 1.2rem; font-weight: bold; background-color: #374151; color: white; border: 2px solid #4b5563; border-radius: 8px; text-align: center; outline: none; transition: all 0.2s; }
+        .controls { display: flex; gap: 8px; align-items: center; justify-content: center; width: 100%; flex-wrap: wrap; }
+        .chapter-badge { background-color: var(--primary); color: white; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; border: 2px solid #6366f1; box-shadow: 0 0 10px rgba(79, 70, 229, 0.4); white-space: nowrap; }
+        .number-input { width: 65px; padding: 8px 5px; font-size: 1.1rem; font-weight: bold; background-color: #374151; color: white; border: 2px solid #4b5563; border-radius: 8px; text-align: center; outline: none; transition: all 0.2s; }
         .number-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(79, 70, 229, 0.6); background-color: #1f2937; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .controls span { font-size: 1.1rem; font-weight: bold; }
+        .controls span { font-size: 1rem; font-weight: bold; }
         
-        button { background-color: var(--primary); color: white; border: none; padding: 10px 15px; font-size: 1rem; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background-color 0.2s, transform 0.1s; box-shadow: 0 4px 6px rgba(0,0,0,0.3); white-space: nowrap; }
+        button { background-color: var(--primary); color: white; border: none; padding: 8px 15px; font-size: 1rem; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background-color 0.2s, transform 0.1s; box-shadow: 0 4px 6px rgba(0,0,0,0.3); white-space: nowrap; }
         button:hover { background-color: var(--primary-hover); filter: brightness(1.1); }
         button:active { transform: translateY(2px); box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
         .btn-pause, .btn-quit { padding: 4px 8px; font-size: 0.8rem; margin-left: 5px; }
@@ -175,35 +173,27 @@
         
         #auto-save-notice { position: absolute; top: 50px; right: 10px; background: rgba(16, 185, 129, 0.8); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; opacity: 0; transition: opacity 0.5s; z-index: 100; pointer-events: none; }
         
-        /* PC 환경 등 기본 배치 */
-        @media (min-width: 901px) { body { padding: 20px 0; } #game-wrapper { border-radius: 12px; height: 90vh; } }
-
         /* =========================================================================
-           🚨 모바일 강제 가로 모드 (세로 모드일 때 화면 자체를 90도 회전시켜버림) 🚨
+           📱 기본 세로 모드(Portrait) 및 작은 화면 최적화
            ========================================================================= */
-        @media screen and (orientation: portrait) and (max-width: 900px) {
-            #game-wrapper {
-                position: absolute;
-                width: 100vh;   /* 너비를 화면 높이에 맞춤 */
-                height: 100vw;  /* 높이를 화면 너비에 맞춤 */
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) rotate(90deg); /* 90도 회전 */
-                transform-origin: center center;
-                border-radius: 0;
-            }
-            /* 회전된 상태이므로 높이 제한은 vw 단위 사용 */
-            .shop-content { max-height: 90vw; } 
-            #hero-grid { max-height: 55vw; }
-            .screen { max-height: 100vw; }
+        @media (min-width: 901px) { body { padding: 20px 0; } #game-wrapper { border-radius: 12px; height: 90vh; } }
+        @media (max-width: 400px) {
+            .castle { font-size: 55px; left: 10px; } .archer { font-size: 30px; left: 55px; bottom: 70px; }
+            .monster { width: 65px; height: 65px; } .monster.boss { width: 100px; height: 100px; }
+            .chapter-badge { padding: 6px 10px; font-size: 1rem; } .number-input { width: 55px; padding: 6px; }
+            #quiz-panel { height: 150px; }
+            #skill-bar { bottom: 150px; }
+            #game-area { height: calc(100% - 150px); }
+            .skill-btn { width: 40px; height: 40px; font-size: 1.1rem; }
         }
 
         /* =========================================================================
-           ✨ 가로 레이아웃 UI (유저가 폰을 눕혔을 때 + 세로인데 강제 회전되었을 때 모두 적용) 
+           👑 모바일 가로 모드 (Landscape) 전용 레이아웃 완벽 대응
            ========================================================================= */
-        @media screen and (max-height: 600px) and (orientation: landscape), screen and (orientation: portrait) and (max-width: 900px) {
+        @media screen and (max-height: 600px) and (orientation: landscape) {
+            /* 퀴즈 패널을 하단 1줄로 압축 */
             #quiz-panel { 
-                height: 75px; 
+                height: 65px; 
                 flex-direction: row; 
                 padding: 5px 15px; 
                 justify-content: space-between; 
@@ -211,18 +201,24 @@
             #verse-display { 
                 flex: 1; 
                 text-align: left; 
-                max-height: 65px; 
+                max-height: 55px; 
                 margin-bottom: 0; 
                 padding: 0 15px 0 0; 
                 font-size: 0.9rem; 
             }
-            .hint-text { margin-bottom: 0; font-size: 0.9rem; margin-right: 15px; }
-            .controls { flex: 0 0 auto; width: auto; }
-            #game-area { height: calc(100% - 75px); }
+            .hint-text { margin-bottom: 0; font-size: 0.85rem; margin-right: 15px; }
+            .controls { flex: 0 0 auto; width: auto; gap: 5px; }
+            .chapter-badge { padding: 5px 10px; font-size: 1rem; }
+            .number-input { width: 60px; padding: 5px; }
+            button { padding: 6px 12px; font-size: 0.9rem; }
             
-            /* 스킬바를 퀴즈패널 바로 위, 왼쪽 정렬로 압축 */
+            /* 게임 영역 확대 */
+            #game-area { height: calc(100% - 65px); }
+            
+            /* 스킬바를 퀴즈패널 바로 위, 화면 좌측 하단에 아담하게 배치 */
             #skill-bar { 
-                bottom: 75px; 
+                bottom: 65px; 
+                height: 50px;
                 padding: 5px 10px; 
                 justify-content: flex-start; 
                 background: none; 
@@ -230,14 +226,14 @@
             .skill-btn { width: 35px; height: 35px; font-size: 1.1rem; }
             .skill-badge { padding: 1px 4px; font-size: 0.65rem; }
             
-            /* 유닛들 크기 및 위치 재조정 (가로 모드용) */
-            .castle { font-size: 50px; left: 10px; bottom: 10px; }
-            .archer { font-size: 30px; left: 50px; bottom: 45px; }
-            .monster { width: 55px; height: 55px; }
-            .monster.boss { width: 90px; height: 90px; }
+            /* 유닛들 크기 및 위치 재조정 (세로 공간 확보) */
+            .castle { font-size: 45px; left: 10px; bottom: 10px; }
+            .archer { font-size: 25px; left: 45px; bottom: 40px; }
+            .monster { width: 50px; height: 50px; bottom: 10px; }
+            .monster.boss { width: 80px; height: 80px; bottom: 10px; }
             .boss-warning { font-size: 2.5rem; top: 40%; }
             
-            /* 모달 및 메인 스크린 최적화 */
+            /* 모달 및 메인 스크린 최적화 (스크롤 되도록) */
             .screen { padding: 10px; }
             .screen h1 { font-size: 1.5rem; margin-bottom: 10px; }
             .stage-grid { grid-template-columns: repeat(5, 1fr); max-width: 600px; margin: 10px 0; gap: 5px; }
@@ -247,10 +243,10 @@
             .setting-group h3 { font-size: 0.9rem; margin-bottom: 4px; }
             .radio-group label { font-size: 0.8rem; }
             
-            .shop-content { padding: 10px 15px; max-width: 600px; }
+            .shop-content { padding: 10px 15px; max-height: 95vh; max-width: 600px; }
             .shop-item { padding: 8px; margin-bottom: 6px; }
-            #hero-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
-            .hero-icon { width: 40px; height: 40px; }
+            #hero-grid { max-height: 60vh; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+            .hero-icon { width: 35px; height: 35px; }
             
             /* 가챠 모달 가로 최적화 */
             #gacha-timer { font-size: 2rem; margin: 5px 0; }
@@ -460,7 +456,7 @@
         {c:1, v:4, t:"요한은 아시아에 있는 일곱 교회에 편지하노니 이제도 계시고 전에도 계시고 장차 오실 이와 그 보좌 앞에 일곱 영과"},
         {c:1, v:5, t:"또 충성된 증인으로 죽은 자들 가운데서 먼저 나시고 땅의 임금들의 머리가 되신 예수 그리스도로 말미암아 은혜와 평강이 너희에게 있기를 원하노라 우리를 사랑하사 그의 피로 우리 죄에서 우리를 해방하시고"},
         {c:1, v:6, t:"그 아버지 하나님을 위하여 우리를 나라와 제사장으로 삼으신 그에게 영광과 능력이 세세토록 있기를 원하노라 아멘"},
-        {c:1, v:7, t:"볼찌어다 구름을 타고 오시리라 각인의 눈이 그를 보겠고 그를 찌른 자들도 볼터이요 땅에 있는 모든 족속이 그를 인하여 애곡하리니 그러하리라 아멘"},
+        {c:1, v:7, t:"볼찌어다 구름을 타고 오시리라 각인의 눈이 그를 보겠고 그를 찌른 자들도 볼터이요 땅에 있는 모든 족속이 정를 인하여 애곡하리니 그러하리라 아멘"},
         {c:1, v:8, t:"주 하나님이 가라사대 나는 알파와 오메가라 이제도 있고 전에도 있었고 장차 올 자요 전능한 자라 하시더라"},
         {c:1, v:9, t:"나 요한은 너희 형제요 예수의 환난과 나라와 참음에 동참하는 자라 하나님의 말씀과 예수의 증거를 인하여 밧모라 하는 섬에 있었더니"},
         {c:1, v:10, t:"주의 날에 내가 성령에 감동하여 내 뒤에서 나는 나팔 소리 같은 큰 음성을 들으니"},
@@ -1195,9 +1191,9 @@
         hpBg.appendChild(hpFill); 
         el.appendChild(hpBg);
         
-        // 가로모드 시 높이 압축 대응
-        const isLandscape = window.innerHeight < 600 || window.innerWidth < window.innerHeight; // 회전 상태도 고려
-        const yOffset = isLandscape ? 5 + Math.random() * 20 : 20 + Math.random() * 40; 
+        // 가로모드/세로모드 동적 몬스터 높이 조절
+        const isLandscape = window.innerHeight < 600;
+        const yOffset = isLandscape ? 10 + Math.random() * 20 : 20 + Math.random() * 40; 
         
         el.style.bottom = yOffset + 'px'; 
         const startX = gameArea.clientWidth; 
@@ -1266,15 +1262,8 @@
         } else { 
             let archerRect = archer.getBoundingClientRect(); 
             let gameAreaRect = gameArea.getBoundingClientRect(); 
-            
-            // 회전된 상태 보정
-            if(window.innerHeight > window.innerWidth && window.innerWidth <= 900) {
-                startX = archerRect.bottom - gameAreaRect.top;
-                startY = gameAreaRect.right - archerRect.left - 30;
-            } else {
-                startX = archerRect.right - gameAreaRect.left; 
-                startY = gameAreaRect.bottom - archerRect.top - 30; 
-            }
+            startX = archerRect.right - gameAreaRect.left; 
+            startY = gameAreaRect.bottom - archerRect.top - 30; 
         }
         
         el.style.left = startX + 'px'; 
