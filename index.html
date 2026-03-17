@@ -354,12 +354,12 @@
     
     <div id="screen-start" class="screen">
         <h1>요한계시록<br>방어전</h1>
-        <div style="display:flex; gap: 5px; margin-bottom: 15px; width: 100%; max-width: 450px; flex-wrap: wrap; justify-content: center;">
-            <button id="btn-open-shop" style="background-color: var(--gold); color: #000; flex: 1; min-width: 60px;">🛒상점</button>
-            <button id="btn-open-hero" style="background-color: #3b82f6; flex: 1; min-width: 60px;">🦸영웅</button>
-            <button id="btn-open-gacha" style="background-color: #a855f7; flex: 1; min-width: 60px;">🔮뽑기</button>
-            <button id="btn-open-dex" style="background-color: #10b981; flex: 1; min-width: 60px;">📖도감</button>
-            <button id="btn-info" style="background-color: #6366f1; flex: 1; min-width: 60px;">🧠가이드</button>
+        <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-bottom: 15px; width: 100%; max-width: 450px;">
+            <button id="btn-open-shop" style="background-color: var(--gold); color: #000; grid-column: span 2; padding: 10px 0; font-size: 0.9rem; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">🛒상점</button>
+            <button id="btn-open-hero" style="background-color: #3b82f6; color: white; grid-column: span 2; padding: 10px 0; font-size: 0.9rem; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">🦸영웅</button>
+            <button id="btn-open-gacha" style="background-color: #a855f7; color: white; grid-column: span 2; padding: 10px 0; font-size: 0.9rem; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">🔮뽑기</button>
+            <button id="btn-open-dex" style="background-color: #10b981; color: white; grid-column: span 3; padding: 10px 0; font-size: 0.9rem; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">📖도감</button>
+            <button id="btn-info" style="background-color: #6366f1; color: white; grid-column: span 3; padding: 10px 0; font-size: 0.9rem; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">🧠가이드</button>
         </div>
         <h3 style="margin:0 0 5px 0; color: #fff;">스테이지 선택</h3>
         <div class="stage-grid" id="stage-grid"></div>
