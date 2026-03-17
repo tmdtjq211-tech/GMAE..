@@ -32,18 +32,17 @@
             overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
         
-        /* 상단 UI 바 (모바일에서 버튼이 많아져도 안 깨지게 최적화) */
         #top-bar {
             position: absolute; top: 0; left: 0; width: 100%; padding: 8px 10px;
-            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 4px;
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 5px 10px;
             box-sizing: border-box; background: rgba(0,0,0,0.85);
-            z-index: 20; font-weight: bold; font-size: 0.85rem; text-shadow: 1px 1px 2px black;
+            z-index: 20; font-weight: bold; font-size: 0.9rem; text-shadow: 1px 1px 2px black;
         }
         
         .stat-group { display: flex; align-items: center; gap: 4px; }
         .hp-container {
-            width: 80px; height: 14px; background-color: rgba(0,0,0,0.5);
-            border: 2px solid white; border-radius: 6px; overflow: hidden; position: relative;
+            width: 90px; height: 16px; background-color: rgba(0,0,0,0.5);
+            border: 2px solid white; border-radius: 8px; overflow: hidden; position: relative;
         }
         #hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ef4444, #f87171); transition: width 0.3s ease-out; }
         
@@ -119,7 +118,7 @@
         .hint-text { color: #10b981; font-weight: bold; font-size: 1rem; margin-bottom: 8px; text-shadow: 1px 1px 2px black; }
         .controls { display: flex; gap: 8px; align-items: center; justify-content: center; width: 100%; flex-wrap: wrap; }
         .chapter-badge { background-color: var(--primary); color: white; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; border: 2px solid #6366f1; box-shadow: 0 0 10px rgba(79, 70, 229, 0.4); white-space: nowrap; }
-        .number-input { width: 100px; padding: 8px 5px; font-size: 1.1rem; font-weight: bold; background-color: #374151; color: white; border: 2px solid #4b5563; border-radius: 8px; text-align: center; outline: none; transition: all 0.2s; }
+        .number-input { width: 120px; padding: 8px 5px; font-size: 1.1rem; font-weight: bold; background-color: #374151; color: white; border: 2px solid #4b5563; border-radius: 8px; text-align: center; outline: none; transition: all 0.2s; }
         .number-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(79, 70, 229, 0.6); background-color: #1f2937; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .controls span { font-size: 1rem; font-weight: bold; }
@@ -131,7 +130,7 @@
         .btn-pause { background-color: #f59e0b; } .btn-pause:hover { background-color: #d97706; }
         .btn-quit { background-color: #ef4444; }
         
-        .speed-btn { background-color: #374151; color: #fff; padding: 2px 6px; font-size: 0.75rem; border-radius: 4px; margin-left: 2px; }
+        .speed-btn { background-color: #374151; color: #fff; padding: 4px 8px; font-size: 0.85rem; border-radius: 4px; margin-left: 2px; }
         .speed-btn.active { background-color: var(--primary); font-weight: bold; border: 1px solid #fff; }
 
         .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 50; backdrop-filter: blur(4px); padding: 20px; box-sizing: border-box; overflow-y: auto; overflow-x: hidden; }
@@ -210,7 +209,7 @@
             .monster.boss { width: 100px; height: 100px; }
             
             .chapter-badge { padding: 6px 10px; font-size: 1rem; } 
-            .number-input { width: 80px; padding: 6px; }
+            .number-input { width: 90px; padding: 6px; }
             #quiz-panel { height: 150px; }
             #skill-bar { bottom: 150px; gap: 8px; }
             #game-area { height: calc(100% - 150px); }
@@ -219,17 +218,18 @@
             .hero-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
-        /* 모바일 가로(Landscape) 최적화 */
+        /* 모바일 가로(Landscape) 최적화: 가로 레이아웃 깨짐 방지 */
         @media screen and (max-height: 600px) and (orientation: landscape) {
             #top-bar { font-size: 0.75rem; padding: 5px 10px; flex-wrap: nowrap; }
             .hp-container { width: 60px; height: 10px; }
             
+            /* 가로모드 퀴즈 패널 조정 */
             #quiz-panel { height: 60px; flex-direction: row; padding: 4px 10px; justify-content: space-between; }
             #verse-display { flex: 1; text-align: left; max-height: 50px; margin-bottom: 0; padding: 0 10px 0 0; font-size: 0.85rem; }
             .hint-text { margin-bottom: 0; font-size: 0.8rem; margin-right: 10px; }
             .controls { flex: 0 0 auto; width: auto; gap: 5px; }
             .chapter-badge { padding: 4px 8px; font-size: 0.9rem; }
-            .number-input { width: 80px; padding: 4px; font-size: 0.9rem;}
+            .number-input { width: 90px; padding: 4px; font-size: 0.9rem;}
             button { padding: 4px 10px; font-size: 0.85rem; }
             
             #game-area { height: calc(100% - 60px); }
@@ -325,7 +325,7 @@
         <div id="hint-display" class="hint-text hidden"></div> 
         <div class="controls">
             <div id="display-chapter" class="chapter-badge">1장</div>
-            <input type="text" id="inp-verse" class="number-input" placeholder="몇 절?" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            <input type="text" id="inp-verse" class="number-input" placeholder="정답 입력" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
             <button id="btn-submit">발사!</button>
         </div>
     </div>
@@ -350,11 +350,20 @@
                     <label><input type="radio" name="start-weapon" value="staff"> ✨ 지팡이</label>
                 </div>
             </div>
+            
             <div class="setting-group">
-                <h3>문제 유형 (신규)</h3>
+                <h3>문제 유형 설정</h3>
                 <div class="radio-group">
-                    <label><input type="radio" name="quiz-type" value="number" checked> 🔢 절 맞추기</label>
-                    <label><input type="radio" name="quiz-type" value="blank"> 🔤 빈칸 맞추기(0.5배속)</label>
+                    <label><input type="radio" name="quiz-type" value="number" checked> 🔢 몇 절인지 맞추기</label>
+                    <label><input type="radio" name="quiz-type" value="blank"> 🔤 단어 빈칸 맞추기</label>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h3>모드 설정</h3>
+                <div class="radio-group">
+                    <label><input type="radio" name="difficulty" value="practice" checked> 연습(힌트O)</label>
+                    <label><input type="radio" name="difficulty" value="normal"> 실전(힌트X)</label>
                 </div>
             </div>
             <div class="setting-group">
@@ -468,9 +477,9 @@
     
     <div id="info-modal" class="screen hidden" style="z-index: 60;">
         <div class="shop-content" style="text-align: left;">
-            <h2 style="color: var(--gold); text-align: center; margin-top: 0;">🧠 게임 가이드 (V8 업데이트)</h2>
-            <p><strong>1. 🐢 배속 시스템 재조정:</strong> 1배속이 기존보다 훨씬 느려졌습니다! 0.25배속부터 3배속까지 자유롭게 조절하세요. (배속이 높을수록 골드 대폭 증가)</p>
-            <p><strong>2. 🔤 빈칸 맞추기 모드:</strong> 설정에서 '빈칸 맞추기'를 선택하면 절이 아닌 단어를 입력해야 합니다. (기본 속도의 50%로 느려짐)</p>
+            <h2 style="color: var(--gold); text-align: center; margin-top: 0;">🧠 게임 가이드 (V9 업데이트)</h2>
+            <p><strong>1. 🐢 배속 시스템 확장:</strong> 0.25배속부터 3배속까지 자유롭게 조절하세요. (속도가 빠를수록 골드 대폭 증가!)</p>
+            <p><strong>2. 🔤 빈칸 맞추기 모드:</strong> 설정에서 '빈칸 맞추기'를 선택하면 절 대신 단어를 입력해야 합니다. (이 모드는 자동으로 속도가 더 느려집니다)</p>
             <p><strong>3. 🦸 영웅 20종 확장:</strong> 만나의 축복, 부활의 기적 등 플레이 스타일을 바꾸는 10종의 신규 영웅이 추가되었습니다.</p>
             <hr style="border: 1px solid #4b5563; margin: 15px 0;">
             <h3 style="color: #fff; margin-top: 0; text-align: center;">⚙️ 설정 및 세이브</h3>
@@ -627,7 +636,6 @@
     const badgeTrump = document.getElementById('badge-trump');
     const badgeBowl = document.getElementById('badge-bowl');
 
-    // --- 신규 10종 포함 총 20종 캐릭터 시스템 ---
     const CHARACTERS = [
         { id: 'c1', name: '은혜의 수호자', desc: '스테이지별 처치 목표 몬스터 수 절반 감소', img: 'images/char1.png', x: 25, y: 130, w: 70, h: 70 },
         { id: 'c2', name: '선지자의 눈', desc: '실전 모드 시 초반 연속 3번 정답 힌트 제공', img: 'images/char2.png', x: 25, y: 130, w: 70, h: 70 },
@@ -644,11 +652,11 @@
         { id: 'c13', name: '진리의 양날검', desc: '일반 몬스터 타격 시 15% 확률로 즉사', img: 'images/char13.png', x: 25, y: 130, w: 70, h: 70 },
         { id: 'c14', name: '영원의 시계', desc: '정답 시 모든 적 0.5초간 50% 느려짐', img: 'images/char14.png', x: 25, y: 130, w: 70, h: 70 },
         { id: 'c15', name: '관통하는 빛', desc: '기본 무기 타격수(관통력) +1 증가', img: 'images/char15.png', x: 25, y: 130, w: 70, h: 70 },
-        { id: 'c16', name: '용살자', desc: '보스 몬스터에게 무조건 2.5배 증폭 데미지', img: 'images/char16.png', x: 25, y: 130, w: 70, h: 70 },
-        { id: 'c17', name: '거룩한 영역', desc: '성벽 근처에 접근한 적들에게 초당 지속 화상 데미지', img: 'images/char17.png', x: 25, y: 130, w: 70, h: 70 },
+        { id: 'c16', name: '용살자', desc: '보스에게 무조건 2.5배 증폭 데미지', img: 'images/char16.png', x: 25, y: 130, w: 70, h: 70 },
+        { id: 'c17', name: '거룩한 영역', desc: '성벽 근처 접근 적들에게 초당 지속 화상 데미지', img: 'images/char17.png', x: 25, y: 130, w: 70, h: 70 },
         { id: 'c18', name: '천둥의 부름', desc: '5콤보 달성 시마다 공짜 번개 자동 발동', img: 'images/char18.png', x: 25, y: 130, w: 70, h: 70 },
-        { id: 'c19', name: '마르지 않는 대접', desc: '아이템 스킬 사용 시 30% 확률로 개수 미소모', img: 'images/char19.png', x: 25, y: 130, w: 70, h: 70 },
-        { id: 'c20', name: '부활의 기적', desc: '게임오버 시 1회 한정 50% 체력 부활 및 적 밀쳐냄', img: 'images/char20.png', x: 25, y: 130, w: 70, h: 70 }
+        { id: 'c19', name: '마르지 않는 대접', desc: '아이템 스킬 사용 시 30% 확률로 미소모', img: 'images/char19.png', x: 25, y: 130, w: 70, h: 70 },
+        { id: 'c20', name: '부활의 기적', desc: '죽을 위기 시 1회 한정 50% 부활 및 적 밀쳐냄', img: 'images/char20.png', x: 25, y: 130, w: 70, h: 70 }
     ];
 
     // 스피드 전면 하향 조정 (기존 속도 절반 수준, 모바일에 맞게 여유롭게)
@@ -665,7 +673,6 @@
         { id: 10, target: 60, hpBase: 300, spdBase: 25 } 
     ];
 
-    // --- Save System ---
     let defaultSave = { 
         unlockedStage: 1, gold: 0, attackPower: 1, 
         slowItems: 3, lightnings: 0, trumpets: 0, bowls: 0, 
@@ -674,10 +681,10 @@
         energy: 0, lives: 0
     };
     let saveData;
-    try { saveData = JSON.parse(localStorage.getItem('revDefSaveV8')); } catch(e) { saveData = null; }
+    try { saveData = JSON.parse(localStorage.getItem('revDefSaveV9')); } catch(e) { saveData = null; }
     
     if (!saveData) {
-        let oldSave = JSON.parse(localStorage.getItem('revDefSaveV7'));
+        let oldSave = JSON.parse(localStorage.getItem('revDefSaveV8'));
         saveData = oldSave ? { ...defaultSave, ...oldSave } : defaultSave;
     }
     if (!saveData.unlockedVerses) saveData.unlockedVerses = [];
@@ -686,7 +693,7 @@
     if (saveData.energy === undefined) saveData.energy = 0;
     if (saveData.lives === undefined) saveData.lives = 0;
 
-    function saveGame() { localStorage.setItem('revDefSaveV8', JSON.stringify(saveData)); }
+    function saveGame() { localStorage.setItem('revDefSaveV9', JSON.stringify(saveData)); }
     function showAutoSaveNotice() { const notice = document.getElementById('auto-save-notice'); notice.style.opacity = 1; setTimeout(() => notice.style.opacity = 0, 2000); }
     
     function exportSave() { 
@@ -718,8 +725,8 @@
     let currentQuiz = null, filteredData = [], currentDifficulty = 'normal', chosenWeapon = 'bow'; 
     let monsters = [], arrows = [], lastTime = 0, spawnTimer = 0, slowTimer = 0, skill2Hints = 0; 
     let wrongAnswersThisSession = [], gameSpeedMultiplier = 1.0; 
-    let currentQuizType = 'number'; // 신규: 빈칸 모드 플래그
-    let currentShield = 0, usedC20 = false; // 신규 캐릭터용 플래그
+    let currentQuizType = 'number'; 
+    let currentShield = 0, usedC20 = false; 
     const CASTLE_X = 100; 
     let gachaTimer = 0, gachaInterval, gachaWord = "", gachaVerseText = "";
 
@@ -923,7 +930,10 @@
 
     function startStage(stageId) {
         playingStageId = stageId; 
-        currentQuizType = document.querySelector('input[name="quiz-type"]:checked').value;
+        
+        // 🚨 라디오 버튼 Null 체크 오류 해결
+        const quizTypeEl = document.querySelector('input[name="quiz-type"]:checked');
+        currentQuizType = quizTypeEl ? quizTypeEl.value : 'number';
         
         if (stageId === 'infinity') { currentStageTarget = Infinity; } 
         else {
@@ -938,7 +948,6 @@
         chosenWeapon = document.querySelector('input[name="start-weapon"]:checked').value; 
         currentDifficulty = document.querySelector('input[name="difficulty"]:checked').value;
         
-        // 스테이지 1~6 장 고정 시스템
         if (stageId !== 'infinity' && stageId <= 6) {
             filteredData = bibleData.filter(d => d.c === stageId);
             setTimeout(() => { showFloatingText(`계시록 ${stageId}장 진행 중`, gameArea.clientWidth/2, gameArea.clientHeight/2, 'floating-text', 'var(--gold)'); }, 500);
@@ -989,7 +998,7 @@
             nextBtn.innerText = "다시하기"; nextBtn.style.display = 'inline-block';
         } else if(isClear) {
             title.innerText = "스테이지 클리어!"; title.style.background = "linear-gradient(to right, #10b981, #34d399)"; title.style.webkitBackgroundClip = "text";
-            let diffText = currentDifficulty === 'normal' ? '<br><span style="color:#10b981; font-size:0.9rem;">(실전 모드 2배 보너스 적용)</span>' : '';
+            let diffText = currentDifficulty === 'normal' ? '<br><span style="color:#10b981; font-size:0.9rem;">(실전 모드 보너스 적용)</span>' : '';
             desc.innerHTML = `성벽 방어 성공!<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldThisStage} G</span>${diffText}`;
             if(playingStageId >= saveData.unlockedStage && playingStageId < 10) { saveData.unlockedStage = playingStageId + 1; saveGame(); renderStageGrid(); }
             nextBtn.innerText = "다음 스테이지"; nextBtn.style.display = (playingStageId < 10) ? 'inline-block' : 'none';
@@ -1016,7 +1025,6 @@
         if(slowTimer > 0) { slowTimer -= (deltaTime / 1000); if(slowTimer <= 0) { slowTimer = 0; document.getElementById('time-slow-overlay').style.display = 'none'; } }
         if(saveData.equippedChar === 'c9') { grace = Math.min(100, grace + (2 * (deltaTime / 1000))); graceFill.style.height = grace + '%'; }
         
-        // 거룩한 영역(c17) 패시브 화상
         if(saveData.equippedChar === 'c17' && Math.floor(timestamp/1000) > Math.floor((timestamp-deltaTime)/1000)) {
             monsters.forEach(m => { if(m.active && m.x <= CASTLE_X + 150) { damageMonster(m, saveData.attackPower * 5); spawnParticles(m.x, parseInt(m.el.style.bottom), '🔥'); } });
         }
@@ -1065,7 +1073,7 @@
 
     function updateMonsters(dt) {
         let currentSpeedFactor = (slowTimer > 0) ? 0.3 : 1;
-        let modeSpeedFactor = (currentQuizType === 'blank') ? 0.5 : 1.0; // 빈칸 모드시 체감속도 절반
+        let modeSpeedFactor = (currentQuizType === 'blank') ? 0.5 : 1.0; 
         for (let i = monsters.length - 1; i >= 0; i--) {
             let m = monsters[i]; if(!m.active) continue;
             m.x -= m.speed * currentSpeedFactor * gameSpeedMultiplier * modeSpeedFactor * (dt / 1000); m.el.style.left = m.x + 'px';
@@ -1078,7 +1086,7 @@
 
     function getWeaponInfo(atk) {
         let count = 1 + Math.floor(atk / 3); 
-        if(saveData.equippedChar === 'c15') count++; // 관통하는 빛
+        if(saveData.equippedChar === 'c15') count++; 
         if (chosenWeapon === 'sword') return { name: "검", count: count + 2, emoji: "🗡️", baseDmg: atk * 8 }; 
         else if (chosenWeapon === 'staff') return { name: "지팡이", count: count, emoji: "🪄", baseDmg: atk * 15 }; 
         else return { name: "활", count: count, emoji: "🏹", baseDmg: atk * 10 };
@@ -1105,7 +1113,6 @@
                 a.el.remove(); arrows.splice(i, 1);
                 let wInfo = getWeaponInfo(saveData.attackPower); let finalDmg = Math.floor(wInfo.baseDmg * damageMultiplier); 
                 
-                // 진리의 양날검 (즉사 확률)
                 if (saveData.equippedChar === 'c13' && !a.target.isBoss && Math.random() < 0.15) {
                     finalDmg = a.target.maxHp; showFloatingText("즉사!", a.target.x, a.target.y+50, 'combo-text', '#a855f7');
                 }
@@ -1121,7 +1128,6 @@
     }
 
     function damageMonster(monster, damage, isSplash = false, isChain = false) {
-        // 용살자(c16) 보스 추가 데미지
         if (monster.isBoss && saveData.equippedChar === 'c16') damage = Math.floor(damage * 2.5);
         
         monster.mhp -= damage; monster.hpBg.style.display = 'block'; monster.hpFill.style.width = Math.max(0, (monster.mhp / monster.maxHp * 100)) + '%';
@@ -1149,7 +1155,6 @@
 
         monster.active = false; monster.el.style.opacity = '0'; monster.hpBg.style.display = 'none'; spawnParticles(monster.x, parseInt(monster.el.style.bottom), '💥');
         
-        // 보상 스케일링
         let stageMultiplier = (playingStageId === 'infinity') ? 10 : playingStageId;
         let earnedGold = monster.isBoss ? (10 + stageMultiplier * 5) : (1 + Math.ceil(stageMultiplier / 2));
         let earnedEnergy = monster.isBoss ? 5 : 1; 
@@ -1157,16 +1162,12 @@
         if (currentDifficulty === 'normal') earnedGold *= 2; 
         if (saveData.equippedChar === 'c4') earnedGold *= 2;
         
-        // 배속별 골드 스케일링
         if (gameSpeedMultiplier === 3.0) earnedGold *= 3;
         else if (gameSpeedMultiplier === 2.0) earnedGold *= 2; 
         else if (gameSpeedMultiplier === 0.5) earnedGold = Math.max(1, Math.floor(earnedGold * 0.5)); 
         else if (gameSpeedMultiplier === 0.25) earnedGold = Math.max(1, Math.floor(earnedGold * 0.25)); 
         
-        saveData.gold += earnedGold; 
-        saveData.energy += earnedEnergy; 
-        earnedGoldThisStage += earnedGold; 
-        renderTopStats(); 
+        saveData.gold += earnedGold; saveData.energy += earnedEnergy; earnedGoldThisStage += earnedGold; renderTopStats(); 
         
         showFloatingText(`+${earnedGold}G / +${earnedEnergy}💧`, monster.x, parseInt(monster.el.style.bottom)+40, 'floating-text', 'var(--gold)');
         killedCount++; updateInGameUI();
@@ -1195,13 +1196,11 @@
         hp -= amount; 
         
         if(hp <= 0) { 
-            // c20 부활의 기적 확인
             if(saveData.equippedChar === 'c20' && !usedC20) {
                 hp = 50; usedC20 = true;
                 showFloatingText("👼 기적의 부활!", CASTLE_X, 250, 'combo-text', '#fde047');
                 monsters.forEach(m => { if(m.active) m.x += 300; });
             } 
-            // 구매한 목숨 확인
             else if(saveData.lives > 0) {
                 saveData.lives--; hp = 100; saveGame(); renderTopStats();
                 showFloatingText("❤️ 생명 연장!", CASTLE_X, 200, 'combo-text', '#ef4444');
@@ -1251,11 +1250,8 @@
         if(isCorrect) {
             combo++; if(skill2Hints > 0) skill2Hints--;
             
-            // c11 만나의 축복
             if(saveData.equippedChar === 'c11') { saveData.gold += 5; earnedGoldThisStage += 5; showFloatingText("+5G", gameArea.clientWidth/2, 100, 'floating-text', 'var(--gold)'); }
-            // c14 영원의 시계 슬로우
             if(saveData.equippedChar === 'c14') { slowTimer = Math.max(slowTimer, 0.5); }
-            // c18 천둥의 부름
             if(saveData.equippedChar === 'c18' && combo > 0 && combo % 5 === 0) {
                 showFloatingText("⚡ 천둥!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 80, 'combo-text', '#fde047');
                 let targets = monsters.filter(m=>m.active).sort((a,b)=>a.x-b.x).slice(0,3);
