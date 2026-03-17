@@ -32,12 +32,16 @@
             overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
         
+        /* 👑 상단 UI 바 (모바일 겹침 방지를 위해 구조 변경) */
         #top-bar {
             position: absolute; top: 0; left: 0; width: 100%; padding: 8px 10px;
-            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 5px 10px;
+            display: flex; justify-content: space-between; align-items: center;
             box-sizing: border-box; background: rgba(0,0,0,0.85);
             z-index: 20; font-weight: bold; font-size: 0.9rem; text-shadow: 1px 1px 2px black;
         }
+        
+        .top-bar-left { display: flex; gap: 8px; align-items: center; }
+        .top-bar-right { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
         
         .stat-group { display: flex; align-items: center; gap: 4px; }
         .hp-container {
@@ -133,7 +137,18 @@
         .speed-btn { background-color: #374151; color: #fff; padding: 4px 8px; font-size: 0.85rem; border-radius: 4px; margin-left: 2px; }
         .speed-btn.active { background-color: var(--primary); font-weight: bold; border: 1px solid #fff; }
 
-        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 50; backdrop-filter: blur(4px); padding: 20px; box-sizing: border-box; overflow-y: auto; overflow-x: hidden; }
+        /* 👑 메인 스크린 스크롤 및 잘림 방지 (핵심 수정) */
+        .screen { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); 
+            display: flex; flex-direction: column; 
+            justify-content: flex-start; /* 화면 위부터 채우기 */
+            align-items: center; z-index: 50; backdrop-filter: blur(4px); 
+            padding: 40px 15px; box-sizing: border-box; overflow-y: auto; overflow-x: hidden; 
+        }
+        /* 높이가 남을 때는 세로 중앙 정렬되도록 도와주는 트릭 */
+        .screen::before, .screen::after { content: ''; margin: auto; }
+
         .screen h1 { font-size: 2.2rem; margin-top: 0; margin-bottom: 15px; text-align: center; background: linear-gradient(to right, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.2; }
         .stage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 8px; margin: 15px 0; width: 100%; max-width: 450px; }
         .stage-btn { background: #1f2937; border: 2px solid #4b5563; color: white; padding: 12px 0; font-size: 1rem; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
@@ -159,7 +174,7 @@
         .shake { animation: shake 0.3s; }
         .hidden { display: none !important; }
         
-        .shop-content { background: #1f2937; padding: 20px; border-radius: 12px; border: 2px solid var(--gold); width: 100%; max-width: 450px; max-height: 85vh; overflow-y: auto; text-align: center; box-sizing: border-box; }
+        .shop-content { background: #1f2937; padding: 20px; border-radius: 12px; border: 2px solid var(--gold); width: 100%; max-width: 450px; text-align: center; box-sizing: border-box; }
         .shop-item { background: #111827; border: 1px solid #4b5563; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         .shop-item-info { text-align: left; flex: 1; }
         .shop-item-title { font-weight: bold; font-size: 0.95rem; color: #fff; margin-bottom: 4px; }
@@ -197,10 +212,16 @@
         
         /* 모바일 세로(Portrait) 최적화 */
         @media (min-width: 901px) { body { padding: 20px 0; } #game-wrapper { border-radius: 12px; height: 90vh; } }
+        
         @media (max-width: 480px) {
-            #top-bar { font-size: 0.75rem; padding: 6px; justify-content: space-around; gap: 4px; }
-            .hp-container { width: 50px; height: 10px; }
-            #in-game-stats { font-size: 0.7rem; }
+            /* 🚨 상단 바 겹침 해결 (2줄로 깔끔하게 배치) */
+            #top-bar { flex-direction: column; align-items: stretch; padding: 6px 10px; gap: 6px; }
+            .top-bar-left, .top-bar-right { width: 100%; justify-content: space-between; }
+            
+            .hp-container { width: 55px; height: 12px; }
+            .speed-btn { padding: 4px 6px; font-size: 0.75rem; }
+            .btn-pause, .btn-quit { padding: 4px 6px; font-size: 0.75rem; margin-left: 2px; }
+            #in-game-stats { font-size: 0.75rem; }
             
             .castle { font-size: 55px; left: 10px; bottom: 20px; } 
             .archer { font-size: 30px; left: 55px; bottom: 70px; }
@@ -216,14 +237,15 @@
             .skill-btn { width: 40px; height: 40px; font-size: 1.1rem; }
             
             .hero-grid { grid-template-columns: repeat(2, 1fr); }
+            .screen { padding: 30px 10px; }
         }
 
-        /* 모바일 가로(Landscape) 최적화: 가로 레이아웃 깨짐 방지 */
+        /* 모바일 가로(Landscape) 최적화 */
         @media screen and (max-height: 600px) and (orientation: landscape) {
-            #top-bar { font-size: 0.75rem; padding: 5px 10px; flex-wrap: nowrap; }
+            #top-bar { flex-direction: row; padding: 5px 10px; flex-wrap: nowrap; }
+            .top-bar-left, .top-bar-right { width: auto; justify-content: flex-start; gap: 6px; }
             .hp-container { width: 60px; height: 10px; }
             
-            /* 가로모드 퀴즈 패널 조정 */
             #quiz-panel { height: 60px; flex-direction: row; padding: 4px 10px; justify-content: space-between; }
             #verse-display { flex: 1; text-align: left; max-height: 50px; margin-bottom: 0; padding: 0 10px 0 0; font-size: 0.85rem; }
             .hint-text { margin-bottom: 0; font-size: 0.8rem; margin-right: 10px; }
@@ -245,7 +267,7 @@
             .monster.boss { width: 80px; height: 80px; bottom: 10px; }
             .boss-warning { font-size: 2rem; top: 40%; }
             
-            .screen { padding: 10px; }
+            .screen { padding: 20px 10px; }
             .screen h1 { font-size: 1.3rem; margin-bottom: 8px; }
             .stage-grid { grid-template-columns: repeat(6, 1fr); max-width: 600px; margin: 8px 0; gap: 5px; }
             .stage-btn { padding: 6px 0; font-size: 0.85rem; }
@@ -265,7 +287,7 @@
 <body>
 <div id="game-wrapper">
     <div id="top-bar">
-        <div style="display:flex; gap: 6px; align-items: center;">
+        <div class="top-bar-left">
             <div class="stat-group">
                 <span title="성 체력">🏰</span>
                 <div class="hp-container"><div id="hp-bar"></div><span id="shield-txt" style="position:absolute; right:2px; top:0; color:#60a5fa; font-size:0.6rem; line-height:14px; font-weight:bold;"></span></div>
@@ -280,7 +302,7 @@
             </div>
         </div>
         
-        <div style="display:flex; gap: 4px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+        <div class="top-bar-right">
             <span style="color: var(--gold); font-weight: bold;">💰<span id="gold-txt">0</span></span>
             <span style="color: #60a5fa; font-weight: bold; margin-right: 2px;" title="기력">💧<span id="energy-txt">0</span></span>
             
@@ -317,7 +339,7 @@
         <div class="skill-btn" id="btn-skill-light" title="번개(Z)">⚡<div class="skill-badge" id="badge-light">0</div></div>
         <div class="skill-btn" id="btn-skill-trump" title="나팔(X)">🎺<div class="skill-badge" id="badge-trump">0</div></div>
         <div class="skill-btn" id="btn-skill-bowl" title="대접(C)">🥣<div class="skill-badge" id="badge-bowl">0</div></div>
-        <div class="skill-btn" id="btn-skill-grace" title="성령의 폭풍(Space)"><div id="grace-fill"></div><span>🌪️</span></div>
+        <div class="skill-btn" id="btn-skill-grace" title="성령의 폭풍(Ctrl)"><div id="grace-fill"></div><span>🌪️</span></div>
     </div>
     
     <div id="quiz-panel">
@@ -477,7 +499,7 @@
     
     <div id="info-modal" class="screen hidden" style="z-index: 60;">
         <div class="shop-content" style="text-align: left;">
-            <h2 style="color: var(--gold); text-align: center; margin-top: 0;">🧠 게임 가이드 (V9 업데이트)</h2>
+            <h2 style="color: var(--gold); text-align: center; margin-top: 0;">🧠 게임 가이드 (V11 업데이트)</h2>
             <p><strong>1. 🐢 배속 시스템 확장:</strong> 0.25배속부터 3배속까지 자유롭게 조절하세요. (속도가 빠를수록 골드 대폭 증가!)</p>
             <p><strong>2. 🔤 빈칸 맞추기 모드:</strong> 설정에서 '빈칸 맞추기'를 선택하면 절 대신 단어를 입력해야 합니다. (이 모드는 자동으로 속도가 더 느려집니다)</p>
             <p><strong>3. 🦸 영웅 20종 확장:</strong> 만나의 축복, 부활의 기적 등 플레이 스타일을 바꾸는 10종의 신규 영웅이 추가되었습니다.</p>
@@ -508,7 +530,7 @@
         {c:1, v:9, t:"나 요한은 너희 형제요 예수의 환난과 나라와 참음에 동참하는 자라 하나님의 말씀과 예수의 증거를 인하여 밧모라 하는 섬에 있었더니"},
         {c:1, v:10, t:"주의 날에 내가 성령에 감동하여 내 뒤에서 나는 나팔 소리 같은 큰 음성을 들으니"},
         {c:1, v:11, t:"가로되 너 보는 것을 책에 써서 에베소, 서머나, 버가모, 두아디라, 사데, 빌라델비아, 라오디게아 일곱 교회에 보내라 하시기로"},
-        {c:1, v:12, t:"몸 돌이켜 나더러 말한 음성을 알아 보려고 하여 돌이킬 때에 일곱 금 촛대를 보았는데"},
+        {c:1, v:12, t:"몸을 돌이켜 나더러 말한 음성을 알아 보려고 하여 돌이킬 때에 일곱 금 촛대를 보았는데"},
         {c:1, v:13, t:"촛대 사이에 인자 같은 이가 발에 끌리는 옷을 입고 가슴에 금띠를 띠고"},
         {c:1, v:14, t:"그 머리와 털의 희기가 흰 양털 같고 눈 같으며 그의 눈은 불꽃 같고"},
         {c:1, v:15, t:"그의 발은 풀무에 단련한 빛난 주석 같고 그의 음성은 많은 물 소리와 같으며"},
@@ -516,7 +538,7 @@
         {c:1, v:17, t:"내가 볼때에 그 발앞에 엎드러져 죽은 자 같이 되매 그가 오른손을 내게 얹고 가라사대 두려워말라 나는 처음이요 나중이니"},
         {c:1, v:18, t:"곧 산 자라 내가 전에 죽었었노라 볼찌어다 이제 세세토록 살아 있어 사망과 음부의 열쇠를 가졌노니"},
         {c:1, v:19, t:"그러므로 네 본 것과 이제 있는 일과 장차 될 일을 기록하라"},
-        {c:1, v:20, t:"네 본 것은 내 오른손에 일곱 별의 비밀과 일곱 금 촛대라 일곱 별은 일곱 교회의 사자요 일곱 촛대는 일곱 교회니라"},
+        {c:1, v:20, t:"네 본 내 오른손에 일곱 별의 비밀과 일곱 금 촛대라 일곱 별은 일곱 교회의 사자요 일곱 촛대는 일곱 교회니라"},
         {c:2, v:1, t:"에베소 교회의 사자에게 편지하기를 오른손에 일곱 별을 붙잡고 일곱 금 촛대 사이에 다니시는 이가 가라사대"},
         {c:2, v:2, t:"내가 네 행위와 수고와 네 인내를 알고 또 악한 자들을 용납지 아니한 것과 자칭 사도라 하되 아닌 자들을 시험하여 그 거짓된 것을 네가 드러낸 것과"},
         {c:2, v:3, t:"또 네가 참고 내 이름을 위하여 견디고 게으르지 아니한 것을 아노라"},
@@ -659,7 +681,6 @@
         { id: 'c20', name: '부활의 기적', desc: '죽을 위기 시 1회 한정 50% 부활 및 적 밀쳐냄', img: 'images/char20.png', x: 25, y: 130, w: 70, h: 70 }
     ];
 
-    // 스피드 전면 하향 조정 (기존 속도 절반 수준, 모바일에 맞게 여유롭게)
     const stageConfig = [
         { id: 1, target: 10, hpBase: 20, spdBase: 6 }, 
         { id: 2, target: 15, hpBase: 35, spdBase: 7.5 }, 
@@ -681,10 +702,10 @@
         energy: 0, lives: 0
     };
     let saveData;
-    try { saveData = JSON.parse(localStorage.getItem('revDefSaveV9')); } catch(e) { saveData = null; }
+    try { saveData = JSON.parse(localStorage.getItem('revDefSaveV11')); } catch(e) { saveData = null; }
     
     if (!saveData) {
-        let oldSave = JSON.parse(localStorage.getItem('revDefSaveV8'));
+        let oldSave = JSON.parse(localStorage.getItem('revDefSaveV10'));
         saveData = oldSave ? { ...defaultSave, ...oldSave } : defaultSave;
     }
     if (!saveData.unlockedVerses) saveData.unlockedVerses = [];
@@ -693,7 +714,7 @@
     if (saveData.energy === undefined) saveData.energy = 0;
     if (saveData.lives === undefined) saveData.lives = 0;
 
-    function saveGame() { localStorage.setItem('revDefSaveV9', JSON.stringify(saveData)); }
+    function saveGame() { localStorage.setItem('revDefSaveV11', JSON.stringify(saveData)); }
     function showAutoSaveNotice() { const notice = document.getElementById('auto-save-notice'); notice.style.opacity = 1; setTimeout(() => notice.style.opacity = 0, 2000); }
     
     function exportSave() { 
@@ -770,11 +791,17 @@
         
         document.addEventListener('keydown', (e) => {
             if(!isPlaying || isPaused) return;
-            if(e.code === 'Space') { e.preventDefault(); useGraceSkill(); }
+            
+            let isTypingText = (currentQuizType === 'blank' && document.activeElement === document.getElementById('inp-verse'));
+
+            if(e.code === 'ControlLeft' || e.code === 'ControlRight' || e.key === 'Control') { e.preventDefault(); useGraceSkill(); }
             if(e.code === 'ShiftLeft' || e.code === 'ShiftRight') { e.preventDefault(); useTimeSlow(); }
-            if(e.code === 'KeyZ' || e.key === 'z') { e.preventDefault(); useLightning(); }
-            if(e.code === 'KeyX' || e.key === 'x') { e.preventDefault(); useTrumpet(); }
-            if(e.code === 'KeyC' || e.key === 'c') { e.preventDefault(); useBowl(); }
+            
+            if(!isTypingText) {
+                if(e.code === 'KeyZ' || e.key === 'z') { e.preventDefault(); useLightning(); }
+                if(e.code === 'KeyX' || e.key === 'x') { e.preventDefault(); useTrumpet(); }
+                if(e.code === 'KeyC' || e.key === 'c') { e.preventDefault(); useBowl(); }
+            }
         });
     }
 
@@ -931,7 +958,6 @@
     function startStage(stageId) {
         playingStageId = stageId; 
         
-        // 🚨 라디오 버튼 Null 체크 오류 해결
         const quizTypeEl = document.querySelector('input[name="quiz-type"]:checked');
         currentQuizType = quizTypeEl ? quizTypeEl.value : 'number';
         
@@ -1362,3 +1388,4 @@
 </script>
 </body>
 </html>
+
