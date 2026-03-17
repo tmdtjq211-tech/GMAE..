@@ -32,6 +32,7 @@
             overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
         
+        /* 상단 UI 바 */
         #top-bar {
             position: absolute; top: 0; left: 0; width: 100%; padding: 8px 10px;
             display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 5px 10px;
@@ -41,7 +42,7 @@
         
         .stat-group { display: flex; align-items: center; gap: 4px; }
         .hp-container {
-            width: 100px; height: 16px; background-color: rgba(0,0,0,0.5);
+            width: 90px; height: 16px; background-color: rgba(0,0,0,0.5);
             border: 2px solid white; border-radius: 8px; overflow: hidden;
         }
         #hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ef4444, #f87171); transition: width 0.3s ease-out; }
@@ -165,9 +166,9 @@
         .shop-item-title { font-weight: bold; font-size: 1rem; color: #fff; margin-bottom: 4px; }
         .shop-item-desc { font-size: 0.8rem; color: #9ca3af; line-height: 1.3; }
         .btn-buy { background: var(--gold); color: #000; padding: 8px 12px; border-radius: 5px; font-weight: bold; font-size: 0.9rem; min-width: 65px; flex-shrink: 0;}
+        .btn-buy.energy-buy { background: #60a5fa; color: #fff; }
         .btn-buy:disabled { background: #4b5563; color: #9ca3af; cursor: not-allowed; }
         
-        /* 도감 모달 스타일 */
         .dex-stats { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; color: #fff; font-weight: bold; background: #111; padding: 10px; border-radius: 8px; border: 1px solid #4b5563;}
         .dex-list { display: flex; flex-direction: column; gap: 8px; text-align: left; max-height: 50vh; overflow-y: auto; padding-right: 5px; }
         .dex-item { background: #111; border: 1px solid #374151; padding: 10px; border-radius: 8px; font-size: 0.9rem; position: relative;}
@@ -179,7 +180,6 @@
         .dex-item.locked .dex-chapter { color: #4b5563; font-weight: bold; margin-bottom: 4px; display: block; }
         .dex-item.locked .dex-text { color: #374151; text-shadow: none; font-style: italic; }
 
-        /* 결과창 오답 노트 */
         .wrong-notes-container { margin-top: 15px; text-align: left; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; border: 1px solid #ef4444; max-height: 150px; overflow-y: auto; width: 100%; box-sizing: border-box;}
         .wrong-note-item { color: #fca5a5; font-size: 0.85rem; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(239, 68, 68, 0.3); line-height: 1.3;}
         .wrong-note-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
@@ -270,6 +270,9 @@
                 <span title="성 체력">🏰</span>
                 <div class="hp-container"><div id="hp-bar"></div></div>
             </div>
+            <div class="stat-group" title="보유 목숨">
+                <span style="font-size: 1rem;">❤️</span><span id="life-txt" style="color:#ef4444; font-weight:bold;">0</span>
+            </div>
             <div class="stat-group" style="display: none;" id="in-game-stats">
                 <span><span id="weapon-txt" style="color:#10b981;">활</span>(<span id="atk-txt" style="color:var(--gold);">1</span>)</span>
                 <span id="combo-multiplier-container" class="hidden"><span id="combo-multiplier" style="color:#f59e0b; font-weight:bold;">x1.0</span></span>
@@ -277,8 +280,9 @@
             </div>
         </div>
         
-        <div style="display:flex; gap: 4px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
-            <span style="color: var(--gold); font-weight: bold; margin-right: 4px;">💰<span id="gold-txt">0</span></span>
+        <div style="display:flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+            <span style="color: var(--gold); font-weight: bold;">💰<span id="gold-txt">0</span></span>
+            <span style="color: #60a5fa; font-weight: bold; margin-right: 4px;" title="기력">💧<span id="energy-txt">0</span></span>
             
             <div id="speed-controls" class="hidden" style="display: flex; gap: 2px;">
                 <button id="btn-speed-05" class="speed-btn" onclick="setGameSpeed(0.5)">0.5x</button>
@@ -386,7 +390,19 @@
     <div id="shop-modal" class="screen hidden" style="z-index: 60;">
         <div class="shop-content">
             <h2 style="color: var(--gold); margin-top: 0; margin-bottom: 5px;">🛒 성소 상점</h2>
-            <p style="color: #ccc; margin-bottom: 15px; font-size: 0.9rem;">보유 골드: <span id="shop-gold-txt" style="color:var(--gold); font-weight:bold;">0</span></p>
+            <p style="color: #ccc; margin-bottom: 15px; font-size: 0.9rem;">
+                보유 골드: <span id="shop-gold-txt" style="color:var(--gold); font-weight:bold;">0</span> &nbsp;|&nbsp; 
+                보유 기력: <span id="shop-energy-txt" style="color:#60a5fa; font-weight:bold;">0</span>
+            </p>
+            
+            <div class="shop-item" style="border-color: #ef4444;">
+                <div class="shop-item-info">
+                    <div class="shop-item-title">❤️ 목숨 추가 (보유: <span id="shop-life-cnt">0</span>)</div>
+                    <div class="shop-item-desc" style="color: #fca5a5;">죽을 때 즉시 체력을 100% 회복합니다.</div>
+                </div>
+                <button class="btn-buy energy-buy" id="btn-buy-life">50 💧</button>
+            </div>
+            
             <div class="shop-item">
                 <div class="shop-item-info"><div class="shop-item-title">⚔️ 강화 (Lv.<span id="shop-atk-lv">1</span>)</div><div class="shop-item-desc">기본 데미지/타격수 증가</div></div>
                 <button class="btn-buy" id="btn-buy-atk">50 G</button>
@@ -452,9 +468,9 @@
     <div id="info-modal" class="screen hidden" style="z-index: 60;">
         <div class="shop-content" style="text-align: left;">
             <h2 style="color: var(--gold); text-align: center; margin-top: 0;">🧠 게임 가이드 (NEW)</h2>
-            <p><strong>1. 오답 노트 & 말씀 도감:</strong> 틀린 구절은 결과창에서 복습하고, 맞춘 구절은 도감에 영구 수집됩니다.</p>
-            <p><strong>2. 🔥 무한 돌파 모드:</strong> 10스테이지 클리어 시 해금되며, 무한히 강해지는 적을 상대로 한계에 도전합니다!</p>
-            <p><strong>3. 💡 스테이지별 학습:</strong> 1~6 스테이지는 각 스테이지 번호와 똑같은 '장'의 말씀만 고정 출제됩니다! (7단계부터 자유 선택)</p>
+            <p><strong>1. 💰 보상 스케일링 & 기력 시스템:</strong> 스테이지가 오를수록 골드를 더 많이 줍니다! 몬스터 처치 시 얻는 '기력(💧)'으로 목숨을 구매하세요.</p>
+            <p><strong>2. 💡 스테이지별 학습:</strong> 1~6 스테이지는 해당 '장'의 말씀만 고정 출제되어 집중 학습이 가능합니다.</p>
+            <p><strong>3. 🔥 무한 돌파 모드:</strong> 10스테이지 클리어 시 해금되며, 무한히 강해지는 적을 상대로 한계에 도전합니다!</p>
             <hr style="border: 1px solid #4b5563; margin: 15px 0;">
             <h3 style="color: #fff; margin-top: 0; text-align: center;">⚙️ 설정 및 세이브</h3>
             <div class="save-load-container">
@@ -470,7 +486,6 @@
 </div>
 
 <script>
-    // --- Data: 요한계시록 1~6장 전체 데이터 ---
     const bibleData = [
         {c:1, v:1, t:"예수 그리스도의 계시라 이는 하나님이 그에게 주사 반드시 속히 될 일을 그 종들에게 보이시려고 그 천사를 그 종 요한에게 보내어 지시하신 것이라"},
         {c:1, v:2, t:"요한은 하나님의 말씀과 예수 그리스도의 증거 곧 자기의 본 것을 다 증거하였느니라"},
@@ -587,7 +602,6 @@
         {c:6, v:17, t:"그들의 진노의 큰 날이 이르렀으니 누가 능히 서리요 하더라"}
     ];
 
-    // --- DOM Elements ---
     const gameArea = document.getElementById('game-area');
     const verseDisplay = document.getElementById('verse-display');
     const hintDisplay = document.getElementById('hint-display');
@@ -612,7 +626,6 @@
     const badgeTrump = document.getElementById('badge-trump');
     const badgeBowl = document.getElementById('badge-bowl');
 
-    // --- 영웅 캐릭터 시스템 ---
     const CHARACTERS = [
         { id: 'c1', name: '은혜의 수호자', desc: '스테이지별 처치 목표 몬스터 수 절반 감소', img: 'images/char1.png', x: 25, y: 130, w: 70, h: 70 },
         { id: 'c2', name: '선지자의 눈', desc: '실전 모드 시 초반 연속 3번 정답 힌트 제공', img: 'images/char2.png', x: 25, y: 130, w: 70, h: 70 },
@@ -626,7 +639,7 @@
         { id: 'c10', name: '은혜로운 방패', desc: '오답 입력 시 콤보가 0이 되지 않고 1만 감소 (강력한 콤보 유지력)', img: 'images/char10.png', x: 25, y: 130, w: 70, h: 70 }
     ];
 
-    // 스피드 조절 (모바일에서도 여유롭게 스피드 베이스 전체 하향 조정)
+    // 스피드 조절 (모바일에서도 여유롭게 전체 하향)
     const stageConfig = [
         { id: 1, target: 10, hpBase: 20, spdBase: 12 }, 
         { id: 2, target: 15, hpBase: 35, spdBase: 15 }, 
@@ -640,30 +653,29 @@
         { id: 10, target: 60, hpBase: 300, spdBase: 50 } 
     ];
 
-    // --- Save System V6 ---
+    // --- Save System ---
     let defaultSave = { 
         unlockedStage: 1, gold: 0, attackPower: 1, 
         slowItems: 3, lightnings: 0, trumpets: 0, bowls: 0, 
         characters: [], equippedChar: null,
-        unlockedVerses: [], bestInfinityScore: 0, verseCounts: {} 
+        unlockedVerses: [], bestInfinityScore: 0, verseCounts: {},
+        energy: 0, lives: 0 // 신규 데이터: 기력, 목숨
     };
     let saveData;
-    try { saveData = JSON.parse(localStorage.getItem('revDefSaveV6')); } catch(e) { saveData = null; }
+    try { saveData = JSON.parse(localStorage.getItem('revDefSaveV7')); } catch(e) { saveData = null; }
     
     if (!saveData) {
-        let oldSave = JSON.parse(localStorage.getItem('revDefSaveV5'));
+        let oldSave = JSON.parse(localStorage.getItem('revDefSaveV6'));
         saveData = oldSave ? { ...defaultSave, ...oldSave } : defaultSave;
     }
-    // 데이터 마이그레이션 안전장치
     if (!saveData.unlockedVerses) saveData.unlockedVerses = [];
     if (!saveData.bestInfinityScore) saveData.bestInfinityScore = 0;
     if (!saveData.verseCounts) saveData.verseCounts = {};
+    if (saveData.energy === undefined) saveData.energy = 0;
+    if (saveData.lives === undefined) saveData.lives = 0;
 
-    function saveGame() { localStorage.setItem('revDefSaveV6', JSON.stringify(saveData)); }
-    
-    function showAutoSaveNotice() { 
-        const notice = document.getElementById('auto-save-notice'); notice.style.opacity = 1; setTimeout(() => notice.style.opacity = 0, 2000); 
-    }
+    function saveGame() { localStorage.setItem('revDefSaveV7', JSON.stringify(saveData)); }
+    function showAutoSaveNotice() { const notice = document.getElementById('auto-save-notice'); notice.style.opacity = 1; setTimeout(() => notice.style.opacity = 0, 2000); }
     
     function exportSave() { 
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(saveData)); 
@@ -678,10 +690,7 @@
             try { 
                 const importedData = JSON.parse(e.target.result); 
                 if(importedData.unlockedStage !== undefined) { 
-                    saveData = importedData; 
-                    if(!saveData.unlockedVerses) saveData.unlockedVerses = [];
-                    if(!saveData.bestInfinityScore) saveData.bestInfinityScore = 0;
-                    if(!saveData.verseCounts) saveData.verseCounts = {};
+                    saveData = { ...defaultSave, ...importedData };
                     saveGame(); renderTopStats(); renderStageGrid(); updateShopUI(); updateEquippedCharDisplay(); updateRangeSelector();
                     alert("세이브 파일을 성공적으로 불러왔습니다!"); 
                 } 
@@ -692,36 +701,14 @@
     
     setInterval(() => { if(isPlaying && !isPaused) { saveGame(); showAutoSaveNotice(); } }, 30000);
 
-    // --- Game Variables ---
-    let isPlaying = false;
-    let isPaused = false;
-    let playingStageId = 1;
-    let currentStageObj = null;
-    let currentStageTarget = 0;
-    let hp = 100;
-    let combo = 0;
-    let damageMultiplier = 1.0;
-    let grace = 0;
-    let spawnedCount = 0;
-    let killedCount = 0;
-    let earnedGoldThisStage = 0; 
-    let currentQuiz = null;
-    let filteredData = [];
-    let currentDifficulty = 'normal';
-    let chosenWeapon = 'bow'; 
-    let monsters = [];
-    let arrows = [];
-    let lastTime = 0;
-    let spawnTimer = 0;
-    let slowTimer = 0;
-    let skill2Hints = 0; 
-    let wrongAnswersThisSession = []; 
-    let gameSpeedMultiplier = 1.0; 
-    
+    let isPlaying = false, isPaused = false, playingStageId = 1, currentStageObj = null, currentStageTarget = 0, hp = 100;
+    let combo = 0, damageMultiplier = 1.0, grace = 0, spawnedCount = 0, killedCount = 0, earnedGoldThisStage = 0; 
+    let currentQuiz = null, filteredData = [], currentDifficulty = 'normal', chosenWeapon = 'bow'; 
+    let monsters = [], arrows = [], lastTime = 0, spawnTimer = 0, slowTimer = 0, skill2Hints = 0; 
+    let wrongAnswersThisSession = [], gameSpeedMultiplier = 1.0; 
     const CASTLE_X = 100; 
-    let gachaTimer = 0; let gachaInterval; let gachaWord = ""; let gachaVerseText = "";
+    let gachaTimer = 0, gachaInterval, gachaWord = "", gachaVerseText = "";
 
-    // --- Initialization ---
     function init() {
         renderTopStats(); renderStageGrid(); updateEquippedCharDisplay(); updateRangeSelector();
         
@@ -744,11 +731,14 @@
         document.getElementById('file-import-save').addEventListener('change', importSave);
         document.getElementById('btn-result-main').addEventListener('click', () => { document.getElementById('screen-result').classList.add('hidden'); renderStageGrid(); document.getElementById('screen-start').classList.remove('hidden'); });
         document.getElementById('btn-result-next').addEventListener('click', () => { document.getElementById('screen-result').classList.add('hidden'); if (playingStageId === 'infinity') startStage('infinity'); else if (playingStageId < 10) startStage(playingStageId + 1); else document.getElementById('screen-start').classList.remove('hidden'); });
+        
         document.getElementById('btn-buy-atk').addEventListener('click', () => buyItem('atk'));
         document.getElementById('btn-buy-slow').addEventListener('click', () => buyItem('slow'));
         document.getElementById('btn-buy-light').addEventListener('click', () => buyItem('light'));
         document.getElementById('btn-buy-trump').addEventListener('click', () => buyItem('trump'));
         document.getElementById('btn-buy-bowl').addEventListener('click', () => buyItem('bowl'));
+        document.getElementById('btn-buy-life').addEventListener('click', () => buyItem('life')); // 신규
+        
         btnSubmit.addEventListener('click', checkAnswer);
         inpVerse.addEventListener('keydown', (e) => { if(isPlaying && e.key === 'Enter') checkAnswer(); });
         document.getElementById('btn-skill-slow').addEventListener('click', useTimeSlow);
@@ -775,38 +765,35 @@
     }
 
     function renderTopStats() {
-        goldTxt.innerText = saveData.gold; atkTxt.innerText = saveData.attackPower; badgeSlow.innerText = saveData.slowItems; 
+        goldTxt.innerText = saveData.gold; 
+        document.getElementById('energy-txt').innerText = saveData.energy;
+        document.getElementById('life-txt').innerText = saveData.lives;
+        atkTxt.innerText = saveData.attackPower; badgeSlow.innerText = saveData.slowItems; 
         badgeLight.innerText = saveData.lightnings; badgeTrump.innerText = saveData.trumpets; badgeBowl.innerText = saveData.bowls;
     }
     
-    // 스테이지 진척도에 따른 범위 선택 셀렉트 박스 업데이트
     function updateRangeSelector() {
         const selRange = document.getElementById('sel-range');
         const lockMsg = document.getElementById('range-lock-msg');
         if (saveData.unlockedStage <= 6) {
-            selRange.disabled = true;
-            lockMsg.style.display = 'block';
+            selRange.disabled = true; lockMsg.style.display = 'block';
         } else {
-            selRange.disabled = false;
-            lockMsg.style.display = 'none';
+            selRange.disabled = false; lockMsg.style.display = 'none';
         }
     }
     
     function renderStageGrid() {
         stageGrid.innerHTML = '';
         for(let i=1; i<=10; i++) {
-            const btn = document.createElement('button');
-            btn.className = 'stage-btn' + (i > saveData.unlockedStage ? ' locked' : '');
+            const btn = document.createElement('button'); btn.className = 'stage-btn' + (i > saveData.unlockedStage ? ' locked' : '');
             btn.innerText = `Stage ${i}`;
             if(i <= saveData.unlockedStage) { btn.onclick = () => startStage(i); }
             stageGrid.appendChild(btn);
         }
         if(saveData.unlockedStage > 10) {
-            const infBtn = document.createElement('button');
-            infBtn.className = 'stage-btn infinity';
+            const infBtn = document.createElement('button'); infBtn.className = 'stage-btn infinity';
             infBtn.innerHTML = `🔥무한돌파<br><span style="font-size:0.75rem; font-weight:normal;">최고: ${saveData.bestInfinityScore}</span>`;
-            infBtn.onclick = () => startStage('infinity');
-            stageGrid.appendChild(infBtn);
+            infBtn.onclick = () => startStage('infinity'); stageGrid.appendChild(infBtn);
         }
         updateRangeSelector();
     }
@@ -815,22 +802,15 @@
         document.getElementById('dex-total').innerText = bibleData.length;
         document.getElementById('dex-unlocked').innerText = saveData.unlockedVerses.length;
         document.getElementById('dex-percent').innerText = Math.floor((saveData.unlockedVerses.length / bibleData.length) * 100) + '%';
-        
         const list = document.getElementById('dex-list'); list.innerHTML = '';
-        
         bibleData.forEach(data => {
-            const verseId = `${data.c}-${data.v}`;
-            const isUnlocked = saveData.unlockedVerses.includes(verseId);
+            const verseId = `${data.c}-${data.v}`; const isUnlocked = saveData.unlockedVerses.includes(verseId);
             const solveCount = saveData.verseCounts && saveData.verseCounts[verseId] ? saveData.verseCounts[verseId] : 0;
-            
-            const item = document.createElement('div');
-            item.className = `dex-item ${isUnlocked ? 'unlocked' : 'locked'}`;
+            const item = document.createElement('div'); item.className = `dex-item ${isUnlocked ? 'unlocked' : 'locked'}`;
             const countBadge = isUnlocked ? `<span class="dex-count-badge">${solveCount}회 완성</span>` : '';
             const chapText = `<span class="dex-chapter">[ 요한계시록 ${data.c}장 ${data.v}절 ]</span> ${countBadge}`;
             const textContent = isUnlocked ? `"${data.t}"` : "??? (스테이지에서 정답을 맞혀 해금하세요)";
-            
-            item.innerHTML = chapText + `<span class="dex-text">${textContent}</span>`;
-            list.appendChild(item);
+            item.innerHTML = chapText + `<span class="dex-text">${textContent}</span>`; list.appendChild(item);
         });
     }
 
@@ -896,20 +876,33 @@
     }
 
     function updateShopUI() {
-        document.getElementById('shop-gold-txt').innerText = saveData.gold; document.getElementById('shop-atk-lv').innerText = saveData.attackPower; 
-        document.getElementById('shop-slow-cnt').innerText = saveData.slowItems; document.getElementById('shop-light-cnt').innerText = saveData.lightnings; 
-        document.getElementById('shop-trump-cnt').innerText = saveData.trumpets; document.getElementById('shop-bowl-cnt').innerText = saveData.bowls;
+        document.getElementById('shop-gold-txt').innerText = saveData.gold; 
+        document.getElementById('shop-energy-txt').innerText = saveData.energy; 
+        document.getElementById('shop-life-cnt').innerText = saveData.lives;
+        
+        document.getElementById('shop-atk-lv').innerText = saveData.attackPower; 
+        document.getElementById('shop-slow-cnt').innerText = saveData.slowItems; 
+        document.getElementById('shop-light-cnt').innerText = saveData.lightnings; 
+        document.getElementById('shop-trump-cnt').innerText = saveData.trumpets; 
+        document.getElementById('shop-bowl-cnt').innerText = saveData.bowls;
+        
         let atkCost = saveData.attackPower * 50; 
         document.getElementById('btn-buy-atk').innerText = `${atkCost} G`; document.getElementById('btn-buy-atk').disabled = (saveData.gold < atkCost); 
         document.getElementById('btn-buy-slow').disabled = (saveData.gold < 30); document.getElementById('btn-buy-light').disabled = (saveData.gold < 20); 
         document.getElementById('btn-buy-trump').disabled = (saveData.gold < 40); document.getElementById('btn-buy-bowl').disabled = (saveData.gold < 80);
+        
+        // 기력 상점 처리
+        document.getElementById('btn-buy-life').disabled = (saveData.energy < 50);
     }
+    
     function buyItem(type) {
         if(type === 'atk') { let cost = saveData.attackPower * 50; if(saveData.gold >= cost) { saveData.gold -= cost; saveData.attackPower++; } }
         else if (type === 'slow' && saveData.gold >= 30) { saveData.gold -= 30; saveData.slowItems++; } 
         else if (type === 'light' && saveData.gold >= 20) { saveData.gold -= 20; saveData.lightnings++; } 
         else if (type === 'trump' && saveData.gold >= 40) { saveData.gold -= 40; saveData.trumpets++; } 
         else if (type === 'bowl' && saveData.gold >= 80) { saveData.gold -= 80; saveData.bowls++; }
+        else if (type === 'life' && saveData.energy >= 50) { saveData.energy -= 50; saveData.lives++; }
+        
         saveGame(); renderTopStats(); updateShopUI();
     }
 
@@ -929,10 +922,9 @@
         chosenWeapon = document.querySelector('input[name="start-weapon"]:checked').value; 
         currentDifficulty = document.querySelector('input[name="difficulty"]:checked').value;
         
-        // 🔒 스테이지 1~6 장 고정 시스템
+        // 스테이지 1~6 장 고정 시스템
         if (stageId !== 'infinity' && stageId <= 6) {
             filteredData = bibleData.filter(d => d.c === stageId);
-            // 안내 문구
             setTimeout(() => { showFloatingText(`계시록 ${stageId}장 진행 중`, gameArea.clientWidth/2, gameArea.clientHeight/2, 'floating-text', 'var(--gold)'); }, 500);
         } else {
             const range = document.getElementById('sel-range').value;
@@ -1123,12 +1115,21 @@
 
         monster.active = false; monster.el.style.opacity = '0'; monster.hpBg.style.display = 'none'; spawnParticles(monster.x, parseInt(monster.el.style.bottom), '💥');
         
-        let earned = monster.isBoss ? 15 : 2; 
-        if (currentDifficulty === 'normal') earned *= 2; if (saveData.equippedChar === 'c4') earned *= 2;
-        if (gameSpeedMultiplier === 2.0) earned *= 2; else if (gameSpeedMultiplier === 0.5) earned = Math.max(1, Math.floor(earned * 0.5)); 
+        // 💰 보상 스케일링 로직 추가 (스테이지 난이도 비례)
+        let stageMultiplier = (playingStageId === 'infinity') ? 10 : playingStageId;
+        let earnedGold = monster.isBoss ? (10 + stageMultiplier * 5) : (1 + Math.ceil(stageMultiplier / 2));
+        let earnedEnergy = monster.isBoss ? 5 : 1; // 기력 획득량
         
-        saveData.gold += earned; earnedGoldThisStage += earned; renderTopStats(); 
-        showFloatingText(`+${earned}G`, monster.x, parseInt(monster.el.style.bottom)+40, 'floating-text', 'var(--gold)');
+        if (currentDifficulty === 'normal') earnedGold *= 2; 
+        if (saveData.equippedChar === 'c4') earnedGold *= 2;
+        if (gameSpeedMultiplier === 2.0) earnedGold *= 2; else if (gameSpeedMultiplier === 0.5) earnedGold = Math.max(1, Math.floor(earnedGold * 0.5)); 
+        
+        saveData.gold += earnedGold; 
+        saveData.energy += earnedEnergy; // 기력 증가
+        earnedGoldThisStage += earnedGold; 
+        renderTopStats(); 
+        
+        showFloatingText(`+${earnedGold}G / +${earnedEnergy}💧`, monster.x, parseInt(monster.el.style.bottom)+40, 'floating-text', 'var(--gold)');
         killedCount++; updateInGameUI();
         
         setTimeout(() => { monster.el.remove(); let idx = monsters.indexOf(monster); if(idx > -1) monsters.splice(idx, 1); if (playingStageId !== 'infinity') checkStageClear(); }, 200);
@@ -1141,6 +1142,30 @@
             if (gameSpeedMultiplier === 2.0) clearBonus *= 2; else if (gameSpeedMultiplier === 0.5) clearBonus = Math.floor(clearBonus * 0.5);
             saveData.gold += clearBonus; earnedGoldThisStage += clearBonus; endGame(true);
         }
+    }
+
+    function takeDamage(amount) { 
+        hp -= amount; 
+        
+        // ❤️ 목숨(부활) 시스템
+        if(hp <= 0) { 
+            if(saveData.lives > 0) {
+                saveData.lives--;
+                hp = 100;
+                saveGame();
+                renderTopStats();
+                showFloatingText("❤️ 부활!", CASTLE_X, 200, 'combo-text', '#ef4444');
+                
+                // 몬스터들 넉백 (위기 탈출)
+                monsters.forEach(m => { if(m.active) m.x += 200; });
+            } else {
+                hp = 0; 
+                endGame(false); 
+            }
+        }
+        
+        castle.classList.add('shake'); setTimeout(() => castle.classList.remove('shake'), 300); 
+        showFloatingText(`-${amount}`, CASTLE_X, 150); updateInGameUI(); 
     }
 
     function nextQuiz() {
@@ -1225,13 +1250,6 @@
         saveData.bowls--; saveGame(); renderTopStats(); showFloatingText("🥣 진노의 대접!!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 20, 'combo-text', '#ef4444'); 
         let originalBg = document.getElementById('game-wrapper').style.background; document.getElementById('game-wrapper').style.background = 'rgba(239, 68, 68, 0.4)'; setTimeout(() => document.getElementById('game-wrapper').style.background = originalBg, 200); 
         activeMonsters.forEach(m => { spawnParticles(m.x, parseInt(m.el.style.bottom), '🔥'); damageMonster(m, 300); }); 
-    }
-
-    function takeDamage(amount) { 
-        hp -= amount; if(hp < 0) hp = 0; 
-        castle.classList.add('shake'); setTimeout(() => castle.classList.remove('shake'), 300); 
-        showFloatingText(`-${amount}`, CASTLE_X, 150); updateInGameUI(); 
-        if(hp === 0) endGame(false); 
     }
 
     function updateInGameUI() {
