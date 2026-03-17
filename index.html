@@ -1074,7 +1074,7 @@
             let wave = Math.floor(spawnedCount / 10); isBoss = (spawnedCount > 0 && spawnedCount % 10 === 9); 
             maxHp = 20 + (wave * 20); if (isBoss) maxHp *= 5; speed = 15 + (wave * 3) + (Math.random() * 5);
         } else {
-            isBoss = (spawnedCount === currentStageTarget - 1); maxHp = isBoss ? currentStageObj.hpBase * 5 : currentStageObj.hpBase; speed = currentStageObj.spdBase + (Math.random() * 10);
+            isBoss = (spawnedCount === currentStageTarget - 1); maxHp = isBoss ? currentStageObj.hpBase * 5 : currentStageObj.hpBase; speed = currentStageObj.spdBase + (Math.random() * 2);
         }
         
         const el = document.createElement('div'); el.className = 'monster' + (isBoss ? ' boss' : '');
