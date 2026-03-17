@@ -1113,9 +1113,9 @@
     function getWeaponInfo(atk) {
         let count = 1 + Math.floor(atk / 3); 
         if(saveData.equippedChar === 'c15') count++; 
-        if (chosenWeapon === 'sword') return { name: "검", count: count + 2, emoji: "🗡️", baseDmg: atk * 16 }; 
-        else if (chosenWeapon === 'staff') return { name: "지팡이", count: count, emoji: "🪄", baseDmg: atk * 30 }; 
-        else return { name: "활", count: count, emoji: "🏹", baseDmg: atk * 20 };
+        if (chosenWeapon === 'sword') return { name: "검", count: count + 2, emoji: "🗡️", baseDmg: atk * 26 }; 
+        else if (chosenWeapon === 'staff') return { name: "지팡이", count: count, emoji: "🪄", baseDmg: atk * 40 }; 
+        else return { name: "활", count: count, emoji: "🏹", baseDmg: atk * 30 };
     }
 
     function createArrow(targetMonster, projectileEmoji, sourceX = null, sourceY = null) {
