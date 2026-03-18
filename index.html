@@ -32,7 +32,6 @@
             overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
         
-        /* 상단 UI 바 */
         #top-bar {
             position: absolute; top: 0; left: 0; width: 100%; padding: 8px 10px;
             display: flex; justify-content: space-between; align-items: center;
@@ -680,15 +679,15 @@
     ];
 
     const stageConfig = [
-        { id: 1, target: 10, hpBase: 20, spdBase: 12 }, 
-        { id: 2, target: 15, hpBase: 35, spdBase: 13 }, 
-        { id: 3, target: 20, hpBase: 50, spdBase: 14 }, 
-        { id: 4, target: 25, hpBase: 70, spdBase: 15 }, 
-        { id: 5, target: 30, hpBase: 90, spdBase: 16 }, 
-        { id: 6, target: 35, hpBase: 120, spdBase: 17 }, 
-        { id: 7, target: 40, hpBase: 150, spdBase: 18 }, 
-        { id: 8, target: 45, hpBase: 180, spdBase: 19 }, 
-        { id: 9, target: 50, hpBase: 220, spdBase: 20 }, 
+        { id: 1, target: 10, hpBase: 20, spdBase: 6 }, 
+        { id: 2, target: 15, hpBase: 35, spdBase: 7.5 }, 
+        { id: 3, target: 20, hpBase: 50, spdBase: 9 }, 
+        { id: 4, target: 25, hpBase: 70, spdBase: 11 }, 
+        { id: 5, target: 30, hpBase: 90, spdBase: 13 }, 
+        { id: 6, target: 35, hpBase: 120, spdBase: 15 }, 
+        { id: 7, target: 40, hpBase: 150, spdBase: 17.5 }, 
+        { id: 8, target: 45, hpBase: 180, spdBase: 20 }, 
+        { id: 9, target: 50, hpBase: 220, spdBase: 22.5 }, 
         { id: 10, target: 60, hpBase: 300, spdBase: 25 } 
     ];
 
@@ -742,12 +741,14 @@
     let isPlaying = false, isPaused = false, playingStageId = 1, currentStageObj = null, currentStageTarget = 0, hp = 100;
     let combo = 0, damageMultiplier = 1.0, grace = 0, spawnedCount = 0, killedCount = 0, earnedGoldThisStage = 0; 
     let currentQuiz = null, filteredData = [], currentDifficulty = 'normal', chosenWeapon = 'bow'; 
-    let monsters = [], arrows = [], lastTime = 0, spawnTimer = 0, slowTimer = 0, skill2Hints = 0; 
+    let monsters = [], arrows = [], lastTime = 0, slowTimer = 0, skill2Hints = 0; 
     let wrongAnswersThisSession = [], gameSpeedMultiplier = 1.0; 
     let currentQuizType = 'number'; 
     let currentShield = 0, usedC20 = false; 
-    const CASTLE_X = 100; 
     let gachaTimer = 0, gachaInterval, gachaWord = "", gachaVerseText = "";
+    
+    const CASTLE_X = 100; 
+    const MONSTER_GAP = 100; // 💡 [핵심] 몬스터 간격 100px 강제 고정
 
     function init() {
         renderTopStats(); renderStageGrid(); updateEquippedCharDisplay(); updateRangeSelector();
@@ -789,12 +790,9 @@
         
         document.addEventListener('keydown', (e) => {
             if(!isPlaying || isPaused) return;
-            
             let isTypingText = (currentQuizType === 'blank' && document.activeElement === document.getElementById('inp-verse'));
-
             if(e.code === 'ControlLeft' || e.code === 'ControlRight' || e.key === 'Control') { e.preventDefault(); useGraceSkill(); }
             if(e.code === 'ShiftLeft' || e.code === 'ShiftRight') { e.preventDefault(); useTimeSlow(); }
-            
             if(!isTypingText) {
                 if(e.code === 'KeyZ' || e.key === 'z') { e.preventDefault(); useLightning(); }
                 if(e.code === 'KeyX' || e.key === 'x') { e.preventDefault(); useTrumpet(); }
@@ -824,11 +822,8 @@
     function updateRangeSelector() {
         const selRange = document.getElementById('sel-range');
         const lockMsg = document.getElementById('range-lock-msg');
-        if (saveData.unlockedStage <= 6) {
-            selRange.disabled = true; lockMsg.style.display = 'block';
-        } else {
-            selRange.disabled = false; lockMsg.style.display = 'none';
-        }
+        if (saveData.unlockedStage <= 6) { selRange.disabled = true; lockMsg.style.display = 'block'; } 
+        else { selRange.disabled = false; lockMsg.style.display = 'none'; }
     }
     
     function renderStageGrid() {
@@ -928,7 +923,6 @@
         document.getElementById('shop-gold-txt').innerText = saveData.gold; 
         document.getElementById('shop-energy-txt').innerText = saveData.energy; 
         document.getElementById('shop-life-cnt').innerText = saveData.lives;
-        
         document.getElementById('shop-atk-lv').innerText = saveData.attackPower; 
         document.getElementById('shop-slow-cnt').innerText = saveData.slowItems; 
         document.getElementById('shop-light-cnt').innerText = saveData.lightnings; 
@@ -949,13 +943,11 @@
         else if (type === 'trump' && saveData.gold >= 40) { saveData.gold -= 40; saveData.trumpets++; } 
         else if (type === 'bowl' && saveData.gold >= 80) { saveData.gold -= 80; saveData.bowls++; }
         else if (type === 'life' && saveData.energy >= 50) { saveData.energy -= 50; saveData.lives++; }
-        
         saveGame(); renderTopStats(); updateShopUI();
     }
 
     function startStage(stageId) {
         playingStageId = stageId; 
-        
         const quizTypeEl = document.querySelector('input[name="quiz-type"]:checked');
         currentQuizType = quizTypeEl ? quizTypeEl.value : 'number';
         
@@ -988,7 +980,6 @@
         spawnedCount = 0; killedCount = 0; slowTimer = 0; earnedGoldThisStage = 0; wrongAnswersThisSession = []; 
         currentShield = (saveData.equippedChar === 'c12') ? 50 : 0;
         usedC20 = false;
-        
         skill2Hints = (saveData.equippedChar === 'c2' && currentDifficulty === 'normal') ? 3 : 0;
         
         monsters.forEach(m => m.el.remove()); monsters = []; arrows.forEach(a => a.el.remove()); arrows = [];
@@ -1028,7 +1019,7 @@
             nextBtn.innerText = "다음 스테이지"; nextBtn.style.display = (playingStageId < 10) ? 'inline-block' : 'none';
         } else {
             title.innerText = "방어 실패..."; title.style.background = "linear-gradient(to right, #ef4444, #b91c1c)"; title.style.webkitBackgroundClip = "text";
-            desc.innerHTML = `몬스터가 성벽을 파괴했습니다.<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldThisStage} G</span>`;
+            desc.innerHTML = `몬스터가 성벽을 파괴했습니다.<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldലാG</span>`;
             nextBtn.style.display = 'none';
         }
         
@@ -1038,68 +1029,47 @@
             wrongAnswersThisSession.forEach(q => { notesHtml += `<div class="wrong-note-item"><span class="wrong-note-badge">${q.c}장 ${q.v}절</span>${q.t}</div>`; });
             wrongNotesArea.innerHTML = notesHtml;
         } else { wrongNotesArea.classList.add('hidden'); }
-        
         screen.classList.remove('hidden');
     }
 
-    function gameLoop(timestamp) {
-        if(!isPlaying || isPaused) return;
-        const deltaTime = timestamp - lastTime; lastTime = timestamp;
-        
-        if(slowTimer > 0) { slowTimer -= (deltaTime / 1000); if(slowTimer <= 0) { slowTimer = 0; document.getElementById('time-slow-overlay').style.display = 'none'; } }
-        if(saveData.equippedChar === 'c9') { grace = Math.min(100, grace + (2 * (deltaTime / 1000))); graceFill.style.height = grace + '%'; }
-        
-        if(saveData.equippedChar === 'c17' && Math.floor(timestamp/1000) > Math.floor((timestamp-deltaTime)/1000)) {
-            monsters.forEach(m => { if(m.active && m.x <= CASTLE_X + 150) { damageMonster(m, saveData.attackPower * 5); spawnParticles(m.x, parseInt(m.el.style.bottom), '🔥'); } });
-        }
-
-        updateMonsters(deltaTime); updateArrows(deltaTime);
-        
-        if (playingStageId === 'infinity' || spawnedCount < currentStageTarget) {
-            spawnTimer += (deltaTime * gameSpeedMultiplier);
-            let rate;
-            if (playingStageId === 'infinity') { rate = Math.max(800, 4000 - (spawnedCount * 30)); } 
-            else { rate = 5000 - (currentStageObj.id * 200); if(currentDifficulty === 'practice') rate += 2000; }
-            if (spawnTimer >= rate) { spawnTimer = 0; spawnMonster(); }
-        }
-        requestAnimationFrame(gameLoop);
-    }
-
-    // ✅ 여기서 간격 강제 띄우기(90px)를 완벽하게 적용했습니다.
+    // 💡 [핵심] 타이머 없이 무조건 100px 간격으로 몬스터 6마리를 상시 유지하는 큐(Queue) 생성 로직
     function spawnMonster() {
         if(playingStageId !== 'infinity' && spawnedCount >= currentStageTarget) return;
+
         let isBoss, maxHp, speed;
         if (playingStageId === 'infinity') {
             let wave = Math.floor(spawnedCount / 10); isBoss = (spawnedCount > 0 && spawnedCount % 10 === 9); 
             maxHp = 20 + (wave * 20); if (isBoss) maxHp *= 5; speed = 15 + (wave * 3);
         } else {
-            isBoss = (spawnedCount === currentStageTarget - 1); maxHp = isBoss ? currentStageObj.hpBase * 5 : currentStageObj.hpBase; 
-            // 재민님이 원하셨던 미세한 랜덤 오차(*2) 유지!
-            speed = currentStageObj.spdBase + (Math.random() * 2); 
+            isBoss = (spawnedCount === currentStageTarget - 1); 
+            maxHp = isBoss ? currentStageObj.hpBase * 5 : currentStageObj.hpBase; 
+            // 랜덤 속도를 완전히 제거해서 속도가 똑같게 고정! (겹침 방지)
+            speed = currentStageObj.spdBase; 
         }
         
         const el = document.createElement('div'); el.className = 'monster' + (isBoss ? ' boss' : '');
         let imgStage = playingStageId === 'infinity' ? (Math.floor(Math.random() * 10) + 1) : playingStageId;
         let gender = Math.random() > 0.5 ? 'm' : 'f'; let typeStr = isBoss ? 'boss' : gender; 
         
-        let walkImgPath = `images/stage${imgStage}_${typeStr}_walk.png`; let hitImgPath = `images/stage${imgStage}_${typeStr}_hit.png`;
+        let walkImgPath = `images/stage${imgStage}_${typeStr}_walk.png`; 
+        let hitImgPath = `images/stage${imgStage}_${typeStr}_hit.png`;
         el.style.backgroundImage = `url('${walkImgPath}')`;
         
-        const hpBg = document.createElement('div'); hpBg.className = 'monster-hp-bg'; const hpFill = document.createElement('div'); hpFill.className = 'monster-hp-fill'; 
+        const hpBg = document.createElement('div'); hpBg.className = 'monster-hp-bg'; 
+        const hpFill = document.createElement('div'); hpFill.className = 'monster-hp-fill'; 
         hpBg.appendChild(hpFill); el.appendChild(hpBg);
         
-        const isLandscape = window.innerHeight < 600; const yOffset = isLandscape ? 10 : 40; 
+        // 💡 랜덤 높이를 제거하고 일렬종대로 예쁘게 걷게 만듦
+        const yOffset = 40; 
         el.style.bottom = yOffset + 'px'; 
         
-        // 💡 몬스터 간격 띄우기 로직! 
+        // 💡 [핵심] 가장 뒤에 있는 몬스터 뒤에서 100픽셀 띄우고 서기
         let startX = gameArea.clientWidth; 
         let activeMonsters = monsters.filter(m => m.active);
-        
         if (activeMonsters.length > 0) {
-            // 가장 뒤에 있는 몬스터를 찾습니다.
             let lastMonster = activeMonsters[activeMonsters.length - 1];
-            let gap = isBoss ? 150 : 90; // 무조건 90픽셀 띄웁니다!
-            // 화면 끝보다 앞 몬스터가 더 뒤에 밀려있으면, 그 뒤에 줄 서서 대기합니다.
+            // 보스면 150px 띄우고, 아니면 100px 띄움 (호랑이 겹침 완벽 해결)
+            let gap = isBoss ? 150 : 100; 
             startX = Math.max(startX, lastMonster.x + gap);
         }
         
@@ -1113,6 +1083,27 @@
         spawnedCount++; updateInGameUI();
     }
 
+    function gameLoop(timestamp) {
+        if(!isPlaying || isPaused) return;
+        const deltaTime = timestamp - lastTime; lastTime = timestamp;
+        
+        if(slowTimer > 0) { slowTimer -= (deltaTime / 1000); if(slowTimer <= 0) { slowTimer = 0; document.getElementById('time-slow-overlay').style.display = 'none'; } }
+        if(saveData.equippedChar === 'c9') { grace = Math.min(100, grace + (2 * (deltaTime / 1000))); graceFill.style.height = grace + '%'; }
+        if(saveData.equippedChar === 'c17' && Math.floor(timestamp/1000) > Math.floor((timestamp-deltaTime)/1000)) {
+            monsters.forEach(m => { if(m.active && m.x <= CASTLE_X + 150) { damageMonster(m, saveData.attackPower * 5); spawnParticles(m.x, parseInt(m.el.style.bottom), '🔥'); } });
+        }
+
+        // 💡 [핵심] 화면상에 몬스터 6마리를 '항상' 유지 (타이머 아예 제거!)
+        let activeCount = monsters.filter(m => m.active).length;
+        while (activeCount < 6 && (playingStageId === 'infinity' || spawnedCount < currentStageTarget)) {
+            spawnMonster();
+            activeCount++;
+        }
+
+        updateMonsters(deltaTime); updateArrows(deltaTime);
+        requestAnimationFrame(gameLoop);
+    }
+
     function updateMonsters(dt) {
         let currentSpeedFactor = (slowTimer > 0) ? 0.3 : 1;
         let modeSpeedFactor = (currentQuizType === 'blank') ? 0.5 : 1.0; 
@@ -1122,8 +1113,6 @@
             if (m.x <= CASTLE_X) {
                 takeDamage(m.isBoss ? 30 : 15); m.el.remove(); monsters.splice(i, 1); killedCount++; 
                 if (playingStageId !== 'infinity') checkStageClear(); else updateInGameUI();
-                // ✅ 충돌 시 즉시 스폰
-                if(isPlaying && (playingStageId === 'infinity' || spawnedCount < currentStageTarget)) { spawnTimer = 0; spawnMonster(); }
             }
         }
     }
@@ -1131,7 +1120,6 @@
     function getWeaponInfo(atk) {
         let count = 1 + Math.floor(atk / 3); 
         if(saveData.equippedChar === 'c15') count++; 
-        // ✅ 기본 데미지 30 상향 적용
         if (chosenWeapon === 'sword') return { name: "검", count: count + 2, emoji: "🗡️", baseDmg: atk * 24 }; 
         else if (chosenWeapon === 'staff') return { name: "지팡이", count: count, emoji: "🪄", baseDmg: atk * 45 }; 
         else return { name: "활", count: count, emoji: "🏹", baseDmg: atk * 30 };
@@ -1157,11 +1145,9 @@
             if (dist < 30) {
                 a.el.remove(); arrows.splice(i, 1);
                 let wInfo = getWeaponInfo(saveData.attackPower); let finalDmg = Math.floor(wInfo.baseDmg * damageMultiplier); 
-                
                 if (saveData.equippedChar === 'c13' && !a.target.isBoss && Math.random() < 0.15) {
                     finalDmg = a.target.maxHp; showFloatingText("즉사!", a.target.x, a.target.y+50, 'combo-text', '#a855f7');
                 }
-                
                 damageMonster(a.target, finalDmg, false, a.isChain);
             } else {
                 let moveDist = a.speed * gameSpeedMultiplier * (dt / 1000); 
@@ -1174,7 +1160,6 @@
 
     function damageMonster(monster, damage, isSplash = false, isChain = false) {
         if (monster.isBoss && saveData.equippedChar === 'c16') damage = Math.floor(damage * 2.5);
-        
         monster.mhp -= damage; monster.hpBg.style.display = 'block'; monster.hpFill.style.width = Math.max(0, (monster.mhp / monster.maxHp * 100)) + '%';
         if (saveData.equippedChar === 'c3') { monster.x = gameArea.clientWidth - 50; }
 
@@ -1206,22 +1191,18 @@
         
         if (currentDifficulty === 'normal') earnedGold *= 2; 
         if (saveData.equippedChar === 'c4') earnedGold *= 2;
-        
         if (gameSpeedMultiplier === 3.0) earnedGold *= 3;
         else if (gameSpeedMultiplier === 2.0) earnedGold *= 2; 
         else if (gameSpeedMultiplier === 0.5) earnedGold = Math.max(1, Math.floor(earnedGold * 0.5)); 
         else if (gameSpeedMultiplier === 0.25) earnedGold = Math.max(1, Math.floor(earnedGold * 0.25)); 
         
         saveData.gold += earnedGold; saveData.energy += earnedEnergy; earnedGoldThisStage += earnedGold; renderTopStats(); 
-        
         showFloatingText(`+${earnedGold}G / +${earnedEnergy}💧`, monster.x, parseInt(monster.el.style.bottom)+40, 'floating-text', 'var(--gold)');
         killedCount++; updateInGameUI();
         
         setTimeout(() => { 
             monster.el.remove(); let idx = monsters.indexOf(monster); if(idx > -1) monsters.splice(idx, 1); 
             if (playingStageId !== 'infinity') checkStageClear(); 
-            // ✅ 처치 시 즉시 스폰 유지
-            if(isPlaying && (playingStageId === 'infinity' || spawnedCount < currentStageTarget)) { spawnTimer = 0; spawnMonster(); }
         }, 200);
     }
 
@@ -1242,171 +1223,78 @@
             if (amount >= currentShield) { amount -= currentShield; currentShield = 0; } 
             else { currentShield -= amount; amount = 0; }
         }
-        
         hp -= amount; 
-        
         if(hp <= 0) { 
-            if(saveData.equippedChar === 'c20' && !usedC20) {
-                hp = 50; usedC20 = true;
-                showFloatingText("👼 기적의 부활!", CASTLE_X, 250, 'combo-text', '#fde047');
-                monsters.forEach(m => { if(m.active) m.x += 300; });
-            } 
-            else if(saveData.lives > 0) {
-                saveData.lives--; hp = 100; saveGame(); renderTopStats();
-                showFloatingText("❤️ 생명 연장!", CASTLE_X, 200, 'combo-text', '#ef4444');
-                monsters.forEach(m => { if(m.active) m.x += 200; });
-            } else {
-                hp = 0; endGame(false); 
-            }
+            if(saveData.equippedChar === 'c20' && !usedC20) { hp = 50; usedC20 = true; showFloatingText("👼 기적의 부활!", CASTLE_X, 250, 'combo-text', '#fde047'); monsters.forEach(m => { if(m.active) m.x += 300; }); } 
+            else if(saveData.lives > 0) { saveData.lives--; hp = 100; saveGame(); renderTopStats(); showFloatingText("❤️ 생명 연장!", CASTLE_X, 200, 'combo-text', '#ef4444'); monsters.forEach(m => { if(m.active) m.x += 200; }); } 
+            else { hp = 0; endGame(false); }
         }
-        
-        castle.classList.add('shake'); setTimeout(() => castle.classList.remove('shake'), 300); 
-        showFloatingText(`-${amount}`, CASTLE_X, 150); updateInGameUI(); 
+        castle.classList.add('shake'); setTimeout(() => castle.classList.remove('shake'), 300); showFloatingText(`-${amount}`, CASTLE_X, 150); updateInGameUI(); 
     }
 
     function nextQuiz() {
         const idx = Math.floor(Math.random() * filteredData.length); currentQuiz = filteredData[idx];
-        
         if (currentQuizType === 'blank') {
-            let rawWords = currentQuiz.t.split(" "); let validWords = [];
-            rawWords.forEach(w => { let clean = w.replace(/[^\w\s가-힣]/g, ''); if(clean.length >= 2) validWords.push(clean); });
+            let rawWords = currentQuiz.t.split(" "); let validWords = []; rawWords.forEach(w => { let clean = w.replace(/[^\w\s가-힣]/g, ''); if(clean.length >= 2) validWords.push(clean); });
             let bWord = validWords.length === 0 ? rawWords[0].replace(/[^\w\s가-힣]/g, '') : validWords[Math.floor(Math.random() * validWords.length)];
-            currentQuiz.blankWord = bWord;
-            let hiddenText = currentQuiz.t.split(" ").map(w => { return w.replace(/[^\w\s가-힣]/g, '') === bWord ? "[ 빈 칸 ]" : w; }).join(" ");
-            
-            displayChapter.innerText = `${currentQuiz.c}장 ${currentQuiz.v}절`; verseDisplay.innerText = `"${hiddenText}"`;
-            inpVerse.type = "text"; inpVerse.placeholder = "단어 입력";
+            currentQuiz.blankWord = bWord; let hiddenText = currentQuiz.t.split(" ").map(w => { return w.replace(/[^\w\s가-힣]/g, '') === bWord ? "[ 빈 칸 ]" : w; }).join(" ");
+            displayChapter.innerText = `${currentQuiz.c}장 ${currentQuiz.v}절`; verseDisplay.innerText = `"${hiddenText}"`; inpVerse.type = "text"; inpVerse.placeholder = "단어 입력";
             if (currentDifficulty === 'practice' || skill2Hints > 0) { hintDisplay.classList.remove('hidden'); hintDisplay.innerText = `[정답: ${bWord}]`; } else { hintDisplay.classList.add('hidden'); }
         } else {
-            displayChapter.innerText = `${currentQuiz.c}장`; verseDisplay.innerText = `"${currentQuiz.t}"`;
-            inpVerse.type = "number"; inpVerse.placeholder = "몇 절?";
+            displayChapter.innerText = `${currentQuiz.c}장`; verseDisplay.innerText = `"${currentQuiz.t}"`; inpVerse.type = "number"; inpVerse.placeholder = "몇 절?";
             if (currentDifficulty === 'practice' || skill2Hints > 0) { hintDisplay.classList.remove('hidden'); hintDisplay.innerText = `[정답: ${currentQuiz.v}절]`; } else { hintDisplay.classList.add('hidden'); }
         }
-        
         inpVerse.value = ''; inpVerse.focus();
     }
 
     function checkAnswer() {
         if(!isPlaying || isPaused) return; 
-        
         let isCorrect = false;
-        if (currentQuizType === 'blank') {
-            isCorrect = (inpVerse.value.trim() === currentQuiz.blankWord);
-        } else {
-            let ansV = parseInt(inpVerse.value); if(isNaN(ansV)) return; 
-            isCorrect = (ansV === currentQuiz.v);
-        }
+        if (currentQuizType === 'blank') { isCorrect = (inpVerse.value.trim() === currentQuiz.blankWord); } else { let ansV = parseInt(inpVerse.value); if(isNaN(ansV)) return; isCorrect = (ansV === currentQuiz.v); }
         
         if(isCorrect) {
             combo++; if(skill2Hints > 0) skill2Hints--;
-            
             if(saveData.equippedChar === 'c11') { saveData.gold += 5; earnedGoldThisStage += 5; showFloatingText("+5G", gameArea.clientWidth/2, 100, 'floating-text', 'var(--gold)'); }
             if(saveData.equippedChar === 'c14') { slowTimer = Math.max(slowTimer, 0.5); }
-            if(saveData.equippedChar === 'c18' && combo > 0 && combo % 5 === 0) {
-                showFloatingText("⚡ 천둥!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 80, 'combo-text', '#fde047');
-                let targets = monsters.filter(m=>m.active).sort((a,b)=>a.x-b.x).slice(0,3);
-                targets.forEach(m => { spawnParticles(m.x, parseInt(m.el.style.bottom), '⚡'); damageMonster(m, 100); });
-            }
+            if(saveData.equippedChar === 'c18' && combo > 0 && combo % 5 === 0) { showFloatingText("⚡ 천둥!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 80, 'combo-text', '#fde047'); let targets = monsters.filter(m=>m.active).sort((a,b)=>a.x-b.x).slice(0,3); targets.forEach(m => { spawnParticles(m.x, parseInt(m.el.style.bottom), '⚡'); damageMonster(m, 100); }); }
             
             let verseId = `${currentQuiz.c}-${currentQuiz.v}`;
-            if (!saveData.unlockedVerses.includes(verseId)) {
-                saveData.unlockedVerses.push(verseId);
-                showFloatingText("📖 도감 해금!", gameArea.clientWidth/2, gameArea.clientHeight/2 - 60, 'floating-text', '#10b981');
-            }
-            if (!saveData.verseCounts[verseId]) saveData.verseCounts[verseId] = 0;
-            saveData.verseCounts[verseId]++;
-
+            if (!saveData.unlockedVerses.includes(verseId)) { saveData.unlockedVerses.push(verseId); showFloatingText("📖 도감 해금!", gameArea.clientWidth/2, gameArea.clientHeight/2 - 60, 'floating-text', '#10b981'); }
+            if (!saveData.verseCounts[verseId]) saveData.verseCounts[verseId] = 0; saveData.verseCounts[verseId]++;
             if(saveData.equippedChar === 'c8') { if(combo >= 4) damageMultiplier = 3.0; else if(combo >= 2) damageMultiplier = 2.0; else damageMultiplier = 1.0; } else { if(combo >= 5) damageMultiplier = 2.0; else if(combo >= 3) damageMultiplier = 1.5; else damageMultiplier = 1.0; }
-            
             document.getElementById('quiz-panel').style.borderColor = '#10b981'; setTimeout(()=> document.getElementById('quiz-panel').style.borderColor = '#374151', 300);
             if(combo > 1) { let buffTxt = damageMultiplier > 1 ? ` (DMG x${damageMultiplier})` : ''; showFloatingText(`${combo} COMBO!${buffTxt}`, gameArea.clientWidth/2, gameArea.clientHeight/2, 'combo-text'); }
-            
-            grace = Math.min(100, grace + 15 + (combo * 2));
-            let weapon = getWeaponInfo(saveData.attackPower); let activeMonsters = monsters.filter(m => m.active); let targets = [];
-            
-            if (chosenWeapon === 'sword') { 
-                let rangeLimit = CASTLE_X + 250; targets = activeMonsters.filter(m => m.x <= rangeLimit).sort((a, b) => a.x - b.x).slice(0, weapon.count); 
-                if (targets.length === 0 && activeMonsters.length > 0) showFloatingText("사거리 밖입니다!", gameArea.clientWidth/2, gameArea.clientHeight/2 - 20); 
-            } else if (chosenWeapon === 'staff') { targets = activeMonsters.sort((a, b) => b.mhp - a.mhp || a.x - b.x).slice(0, weapon.count); } else { targets = activeMonsters.sort((a, b) => a.x - b.x).slice(0, weapon.count); }
-            
+            grace = Math.min(100, grace + 15 + (combo * 2)); let weapon = getWeaponInfo(saveData.attackPower); let activeMonsters = monsters.filter(m => m.active); let targets = [];
+            if (chosenWeapon === 'sword') { let rangeLimit = CASTLE_X + 250; targets = activeMonsters.filter(m => m.x <= rangeLimit).sort((a, b) => a.x - b.x).slice(0, weapon.count); if (targets.length === 0 && activeMonsters.length > 0) showFloatingText("사거리 밖입니다!", gameArea.clientWidth/2, gameArea.clientHeight/2 - 20); } else if (chosenWeapon === 'staff') { targets = activeMonsters.sort((a, b) => b.mhp - a.mhp || a.x - b.x).slice(0, weapon.count); } else { targets = activeMonsters.sort((a, b) => a.x - b.x).slice(0, weapon.count); }
             if(targets.length > 0) { targets.forEach((target, index) => { setTimeout(() => createArrow(target, weapon.emoji), index * 100); }); } else { archer.style.transform = 'scale(1.2)'; setTimeout(() => archer.style.transform = 'scale(1)', 150); }
-            
             updateInGameUI(); nextQuiz();
         } else {
             if (!wrongAnswersThisSession.some(q => q.t === currentQuiz.t)) { wrongAnswersThisSession.push(currentQuiz); }
             if (saveData.equippedChar === 'c10') { combo = Math.max(0, combo - 1); } else { combo = 0; }
             if(saveData.equippedChar === 'c8') { if(combo >= 4) damageMultiplier = 3.0; else if(combo >= 2) damageMultiplier = 2.0; else damageMultiplier = 1.0; } else { if(combo >= 5) damageMultiplier = 2.0; else if(combo >= 3) damageMultiplier = 1.5; else damageMultiplier = 1.0; }
-
-            updateInGameUI();
-            document.getElementById('quiz-panel').classList.add('shake'); document.getElementById('quiz-panel').style.borderColor = '#ef4444';
-            setTimeout(()=> { document.getElementById('quiz-panel').classList.remove('shake'); document.getElementById('quiz-panel').style.borderColor = '#374151'; }, 300);
-            
-            monsters.forEach(m => { if(m.active) m.x -= 40; }); 
-            showFloatingText("오답!", gameArea.clientWidth/2, gameArea.clientHeight/2 - 50); 
-            inpVerse.value = ''; inpVerse.focus();
+            updateInGameUI(); document.getElementById('quiz-panel').classList.add('shake'); document.getElementById('quiz-panel').style.borderColor = '#ef4444'; setTimeout(()=> { document.getElementById('quiz-panel').classList.remove('shake'); document.getElementById('quiz-panel').style.borderColor = '#374151'; }, 300);
+            monsters.forEach(m => { if(m.active) m.x -= 40; }); showFloatingText("오답!", gameArea.clientWidth/2, gameArea.clientHeight/2 - 50); inpVerse.value = ''; inpVerse.focus();
         }
     }
 
-    function useGraceSkill() { 
-        if (grace < 100) { showFloatingText("은혜 부족!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } 
-        grace = 0; updateInGameUI(); showFloatingText("성령의 폭풍!!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 50); 
-        let originalBg = document.getElementById('game-wrapper').style.background; document.getElementById('game-wrapper').style.background = 'rgba(251, 191, 36, 0.5)'; setTimeout(() => document.getElementById('game-wrapper').style.background = originalBg, 200); 
-        monsters.forEach(m => { if (m.active) { m.x += 150; spawnParticles(m.x, parseInt(m.el.style.bottom), '⚡'); damageMonster(m, saveData.attackPower * 30); } }); 
-    }
-    
-    function checkItemConsume() {
-        if(saveData.equippedChar === 'c19' && Math.random() < 0.3) { showFloatingText("✨ 소모 무효!", CASTLE_X, 250, 'floating-text', '#60a5fa'); return false; }
-        return true;
-    }
-    
-    function useTimeSlow() { 
-        if (saveData.slowItems <= 0) { showFloatingText("모래시계 없음!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } 
-        if (slowTimer > 0) return; if(checkItemConsume()) saveData.slowItems--; saveGame(); renderTopStats(); slowTimer = 5.0; 
-        document.getElementById('time-slow-overlay').style.display = 'block'; showFloatingText("시간 지연!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 20, 'combo-text', '#60a5fa'); 
-    }
-    function useLightning() { 
-        if (saveData.lightnings <= 0) { showFloatingText("번개 없음!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } 
-        let activeMonsters = monsters.filter(m => m.active).sort((a, b) => a.x - b.x); if (activeMonsters.length === 0) return; 
-        if(checkItemConsume()) saveData.lightnings--; saveGame(); renderTopStats(); showFloatingText("⚡ 심판의 번개!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 20, 'combo-text', '#fde047'); 
-        let targets = activeMonsters.slice(0, 3); targets.forEach(m => { spawnParticles(m.x, parseInt(m.el.style.bottom), '⚡'); damageMonster(m, 100); }); 
-    }
-    function useTrumpet() { 
-        if (saveData.trumpets <= 0) { showFloatingText("나팔 없음!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } 
-        let activeMonsters = monsters.filter(m => m.active); if (activeMonsters.length === 0) return; 
-        if(checkItemConsume()) saveData.trumpets--; saveGame(); renderTopStats(); showFloatingText("🎺 나팔 소리!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 20, 'combo-text', '#fcd34d'); 
-        activeMonsters.forEach(m => { m.x = gameArea.clientWidth - 50; spawnParticles(m.x, parseInt(m.el.style.bottom), '💨'); }); 
-    }
-    function useBowl() { 
-        if (saveData.bowls <= 0) { showFloatingText("대접 없음!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } 
-        let activeMonsters = monsters.filter(m => m.active); if (activeMonsters.length === 0) return; 
-        if(checkItemConsume()) saveData.bowls--; saveGame(); renderTopStats(); showFloatingText("🥣 진노의 대접!!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 20, 'combo-text', '#ef4444'); 
-        let originalBg = document.getElementById('game-wrapper').style.background; document.getElementById('game-wrapper').style.background = 'rgba(239, 68, 68, 0.4)'; setTimeout(() => document.getElementById('game-wrapper').style.background = originalBg, 200); 
-        activeMonsters.forEach(m => { spawnParticles(m.x, parseInt(m.el.style.bottom), '🔥'); damageMonster(m, 300); }); 
-    }
+    function useGraceSkill() { if (grace < 100) { showFloatingText("은혜 부족!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } grace = 0; updateInGameUI(); showFloatingText("성령의 폭풍!!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 50); let originalBg = document.getElementById('game-wrapper').style.background; document.getElementById('game-wrapper').style.background = 'rgba(251, 191, 36, 0.5)'; setTimeout(() => document.getElementById('game-wrapper').style.background = originalBg, 200); monsters.forEach(m => { if (m.active) { m.x += 150; spawnParticles(m.x, parseInt(m.el.style.bottom), '⚡'); damageMonster(m, saveData.attackPower * 30); } }); }
+    function checkItemConsume() { if(saveData.equippedChar === 'c19' && Math.random() < 0.3) { showFloatingText("✨ 소모 무효!", CASTLE_X, 250, 'floating-text', '#60a5fa'); return false; } return true; }
+    function useTimeSlow() { if (saveData.slowItems <= 0) { showFloatingText("모래시계 없음!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } if (slowTimer > 0) return; if(checkItemConsume()) saveData.slowItems--; saveGame(); renderTopStats(); slowTimer = 5.0; document.getElementById('time-slow-overlay').style.display = 'block'; showFloatingText("시간 지연!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 20, 'combo-text', '#60a5fa'); }
+    function useLightning() { if (saveData.lightnings <= 0) { showFloatingText("번개 없음!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } let activeMonsters = monsters.filter(m => m.active).sort((a, b) => a.x - b.x); if (activeMonsters.length === 0) return; if(checkItemConsume()) saveData.lightnings--; saveGame(); renderTopStats(); showFloatingText("⚡ 심판의 번개!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 20, 'combo-text', '#fde047'); let targets = activeMonsters.slice(0, 3); targets.forEach(m => { spawnParticles(m.x, parseInt(m.el.style.bottom), '⚡'); damageMonster(m, 100); }); }
+    function useTrumpet() { if (saveData.trumpets <= 0) { showFloatingText("나팔 없음!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } let activeMonsters = monsters.filter(m => m.active); if (activeMonsters.length === 0) return; if(checkItemConsume()) saveData.trumpets--; saveGame(); renderTopStats(); showFloatingText("🎺 나팔 소리!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 20, 'combo-text', '#fcd34d'); activeMonsters.forEach(m => { m.x = gameArea.clientWidth - 50; spawnParticles(m.x, parseInt(m.el.style.bottom), '💨'); }); }
+    function useBowl() { if (saveData.bowls <= 0) { showFloatingText("대접 없음!", gameArea.clientWidth/2, gameArea.clientHeight/2); return; } let activeMonsters = monsters.filter(m => m.active); if (activeMonsters.length === 0) return; if(checkItemConsume()) saveData.bowls--; saveGame(); renderTopStats(); showFloatingText("🥣 진노의 대접!!", gameArea.clientWidth/2, gameArea.clientHeight/2 + 20, 'combo-text', '#ef4444'); let originalBg = document.getElementById('game-wrapper').style.background; document.getElementById('game-wrapper').style.background = 'rgba(239, 68, 68, 0.4)'; setTimeout(() => document.getElementById('game-wrapper').style.background = originalBg, 200); activeMonsters.forEach(m => { spawnParticles(m.x, parseInt(m.el.style.bottom), '🔥'); damageMonster(m, 300); }); }
 
     function updateInGameUI() {
         hpBar.style.width = hp + '%'; graceFill.style.height = grace + '%'; 
         if (playingStageId === 'infinity') { progressTxt.innerText = `${killedCount} / ∞`; } else { progressTxt.innerText = `${killedCount}/${currentStageTarget}`; }
-        
         let weapon = getWeaponInfo(saveData.attackPower); weaponTxt.innerText = weapon.name;
         if (combo >= 2) { comboMultContainer.classList.remove('hidden'); comboMultTxt.innerText = `x${damageMultiplier.toFixed(1)}`; } else { comboMultContainer.classList.add('hidden'); }
         if(hp <= 30) hpBar.style.background = 'red'; else hpBar.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
-        
         if(currentShield > 0) { document.getElementById('shield-txt').innerText = `+${currentShield}`; } else { document.getElementById('shield-txt').innerText = ''; }
     }
 
-    function showFloatingText(text, x, y, customClass = 'floating-text', color = null) { 
-        const el = document.createElement('div'); el.className = customClass; el.innerText = text; el.style.left = x + 'px'; el.style.bottom = y + 'px'; 
-        if(color) el.style.color = color; gameArea.appendChild(el); setTimeout(() => el.remove(), 1200); 
-    }
-    
-    function spawnParticles(x, y, emoji) { 
-        for(let i=0; i<4; i++) { 
-            const p = document.createElement('div'); p.innerText = emoji; p.style.position = 'absolute'; p.style.left = x + 'px'; p.style.bottom = y + 'px'; p.style.fontSize = '24px'; p.style.pointerEvents = 'none'; p.style.zIndex = 20; gameArea.appendChild(p); 
-            let dx = (Math.random() - 0.5) * 150; let dy = Math.random() * 100 + 50; 
-            p.animate([ { transform: `translate(0, 0) rotate(0deg) scale(1)`, opacity: 1 }, { transform: `translate(${dx}px, ${-dy}px) rotate(${Math.random()*360}deg) scale(0)`, opacity: 0 } ], { duration: 600 + Math.random() * 200, easing: 'ease-out' }).onfinish = () => p.remove(); 
-        } 
-    }
+    function showFloatingText(text, x, y, customClass = 'floating-text', color = null) { const el = document.createElement('div'); el.className = customClass; el.innerText = text; el.style.left = x + 'px'; el.style.bottom = y + 'px'; if(color) el.style.color = color; gameArea.appendChild(el); setTimeout(() => el.remove(), 1200); }
+    function spawnParticles(x, y, emoji) { for(let i=0; i<4; i++) { const p = document.createElement('div'); p.innerText = emoji; p.style.position = 'absolute'; p.style.left = x + 'px'; p.style.bottom = y + 'px'; p.style.fontSize = '24px'; p.style.pointerEvents = 'none'; p.style.zIndex = 20; gameArea.appendChild(p); let dx = (Math.random() - 0.5) * 150; let dy = Math.random() * 100 + 50; p.animate([ { transform: `translate(0, 0) rotate(0deg) scale(1)`, opacity: 1 }, { transform: `translate(${dx}px, ${-dy}px) rotate(${Math.random()*360}deg) scale(0)`, opacity: 0 } ], { duration: 600 + Math.random() * 200, easing: 'ease-out' }).onfinish = () => p.remove(); } }
 
     window.onload = () => { init(); };
 </script>
