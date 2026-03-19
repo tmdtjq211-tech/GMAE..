@@ -839,6 +839,8 @@
             if(i <= saveData.unlockedStage) { btn.onclick = () => startStage(i); }
             stageGrid.appendChild(btn);
         }
+        
+        // 💡 11단계(무한돌파) 조건 체크가 정상 작동하도록!
         if(saveData.unlockedStage > 10) {
             const infBtn = document.createElement('button'); infBtn.className = 'stage-btn infinity';
             infBtn.innerHTML = `🔥무한돌파<br><span style="font-size:0.75rem; font-weight:normal;">최고: ${saveData.bestInfinityScore}</span>`;
@@ -1017,15 +1019,29 @@
         let extraText = "";
         if (playingStageId === 'infinity') {
             title.innerText = "무한 돌파 종료"; title.style.background = "linear-gradient(to right, #ef4444, #fca5a5)"; title.style.webkitBackgroundClip = "text";
-            if (killedCount > saveData.bestInfinityScore) { saveData.bestInfinityScore = killedCount; extraText = `<br><span style="color:#10b981; font-weight:bold;">🎉 신기록 달성!</span>`; saveGame(); renderStageGrid(); }
+            if (killedCount > saveData.bestInfinityScore) { saveData.bestInfinityScore = killedCount; extraText = `<br><span style="color:#10b981; font-weight:bold;">🎉 신기록 달성!</span>`; }
             desc.innerHTML = `최종 처치 수: <span style="color:red; font-weight:bold;">${killedCount}</span>${extraText}<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldThisStage} G</span>`;
+            saveGame(); renderStageGrid();
             nextBtn.innerText = "다시하기"; nextBtn.style.display = 'inline-block';
         } else if(isClear) {
             title.innerText = "스테이지 클리어!"; title.style.background = "linear-gradient(to right, #10b981, #34d399)"; title.style.webkitBackgroundClip = "text";
             let diffText = currentDifficulty === 'normal' ? '<br><span style="color:#10b981; font-size:0.9rem;">(실전 모드 보너스 적용)</span>' : '';
             desc.innerHTML = `성벽 방어 성공!<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldThisStage} G</span>${diffText}`;
-            if(playingStageId >= saveData.unlockedStage && playingStageId < 10) { saveData.unlockedStage = playingStageId + 1; saveGame(); renderStageGrid(); }
-            nextBtn.innerText = "다음 스테이지"; nextBtn.style.display = (playingStageId < 10) ? 'inline-block' : 'none';
+            
+            // 💡 [버그 수정] 10스테이지를 깨면 무한 모드(11)가 열리도록 <= 10 으로 수정했습니다!
+            if(playingStageId !== 'infinity' && playingStageId >= saveData.unlockedStage && playingStageId <= 10) { 
+                saveData.unlockedStage = playingStageId + 1; 
+                saveGame(); renderStageGrid(); 
+            }
+            
+            if (playingStageId === 10) {
+                desc.innerHTML += `<br><span style="color:#ef4444; font-weight:bold;">🔥 무한 돌파 모드가 개방되었습니다!</span>`;
+                nextBtn.style.display = 'none'; // 10 깨면 무한모드는 메인에서 선택
+            } else {
+                nextBtn.innerText = "다음 스테이지"; 
+                nextBtn.style.display = 'inline-block';
+            }
+            
         } else {
             title.innerText = "방어 실패..."; title.style.background = "linear-gradient(to right, #ef4444, #b91c1c)"; title.style.webkitBackgroundClip = "text";
             desc.innerHTML = `몬스터가 성벽을 파괴했습니다.<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldThisStage} G</span>`;
@@ -1066,15 +1082,18 @@
     }
 
     // ✅ 여기서 간격 강제 띄우기(90px)를 완벽하게 적용했습니다.
+    // 💡 [기능 추가] 무한 모드 시 1~10스테이지 이미지 & 보스 랜덤 등장
     function spawnMonster() {
         if(playingStageId !== 'infinity' && spawnedCount >= currentStageTarget) return;
         let isBoss, maxHp, speed;
         if (playingStageId === 'infinity') {
-            let wave = Math.floor(spawnedCount / 10); isBoss = (spawnedCount > 0 && spawnedCount % 10 === 9); 
-            maxHp = 20 + (wave * 20); if (isBoss) maxHp *= 5; speed = 15 + (wave * 3);
+            let wave = Math.floor(spawnedCount / 10); 
+            isBoss = (spawnedCount > 0 && spawnedCount % 10 === 9); 
+            maxHp = 20 + (wave * 20); 
+            if (isBoss) maxHp *= 5; 
+            speed = 15 + (wave * 3);
         } else {
             isBoss = (spawnedCount === currentStageTarget - 1); maxHp = isBoss ? currentStageObj.hpBase * 5 : currentStageObj.hpBase; 
-            // 재민님이 원하셨던 미세한 랜덤 오차(*2) 유지!
             speed = currentStageObj.spdBase + (Math.random() * 2); 
         }
         
@@ -1091,15 +1110,12 @@
         const isLandscape = window.innerHeight < 600; const yOffset = isLandscape ? 10 : 40; 
         el.style.bottom = yOffset + 'px'; 
         
-        // 💡 몬스터 간격 띄우기 로직! 
         let startX = gameArea.clientWidth; 
         let activeMonsters = monsters.filter(m => m.active);
         
         if (activeMonsters.length > 0) {
-            // 가장 뒤에 있는 몬스터를 찾습니다.
             let lastMonster = activeMonsters[activeMonsters.length - 1];
-            let gap = isBoss ? 150 : 90; // 무조건 90픽셀 띄웁니다!
-            // 화면 끝보다 앞 몬스터가 더 뒤에 밀려있으면, 그 뒤에 줄 서서 대기합니다.
+            let gap = isBoss ? 150 : 90;
             startX = Math.max(startX, lastMonster.x + gap);
         }
         
@@ -1131,7 +1147,6 @@
     function getWeaponInfo(atk) {
         let count = 1 + Math.floor(atk / 3); 
         if(saveData.equippedChar === 'c15') count++; 
-        // ✅ 기본 데미지 30 상향 적용
         if (chosenWeapon === 'sword') return { name: "검", count: count + 2, emoji: "🗡️", baseDmg: atk * 24 }; 
         else if (chosenWeapon === 'staff') return { name: "지팡이", count: count, emoji: "🪄", baseDmg: atk * 45 }; 
         else return { name: "활", count: count, emoji: "🏹", baseDmg: atk * 30 };
