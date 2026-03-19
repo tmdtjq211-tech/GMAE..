@@ -155,6 +155,10 @@
         
         .stage-btn.infinity { background: linear-gradient(45deg, #b91c1c, #ef4444); border-color: #fca5a5; color: white; animation: pulseRed 2s infinite; }
         @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        
+        /* 💡 보스 모드 전용 버튼 디자인 추가 */
+        .stage-btn.boss-mode { background: linear-gradient(45deg, #7e22ce, #c026d3); border-color: #e879f9; color: white; animation: pulsePurple 2s infinite; }
+        @keyframes pulsePurple { 0% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(168, 85, 247, 0); } 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); } }
 
         .settings-panel { background: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid #4b5563; }
         .setting-group { margin-bottom: 12px; } .setting-group:last-child { margin-bottom: 0; }
@@ -501,6 +505,7 @@
             <p><strong>1. 🐢 배속 시스템 확장:</strong> 0.25배속부터 3배속까지 자유롭게 조절하세요. (속도가 빠를수록 골드 대폭 증가!)</p>
             <p><strong>2. 🔤 빈칸 맞추기 모드:</strong> 설정에서 '빈칸 맞추기'를 선택하면 절 대신 단어를 입력해야 합니다. (이 모드는 자동으로 속도가 더 느려집니다)</p>
             <p><strong>3. 🦸 영웅 20종 확장:</strong> 만나의 축복, 부활의 기적 등 플레이 스타일을 바꾸는 10종의 신규 영웅이 추가되었습니다.</p>
+            <p><strong>4. 🔥 신규 모드 추가:</strong> 10스테이지 클리어 시 극악의 난이도 <span style="color:red;">[무한 돌파]</span>와 <span style="color:purple;">[보스전]</span> 모드가 개방됩니다.</p>
             <hr style="border: 1px solid #4b5563; margin: 15px 0;">
             <h3 style="color: #fff; margin-top: 0; text-align: center;">⚙️ 설정 및 세이브</h3>
             <div class="save-load-container">
@@ -569,7 +574,7 @@
         {c:3, v:1, t:"사데 교회의 사자에게 편지하기를 하나님의 일곱 영과 일곱 별을 가진 이가 가라사대 내가 네 행위를 아노니 네가 살았다 하는 이름은 가졌으나 죽은 자로다"},
         {c:3, v:2, t:"너는 일깨워 그 남은바 죽게 된 것을 굳게 하라 내 하나님 앞에 네 행위의 온전한 것을 찾지 못하였노니"},
         {c:3, v:3, t:"그러므로 네가 어떻게 받았으며 어떻게 들었는지 생각하고 지키어 회개하라 만일 일깨지 아니하면 내가 도적 같이 이르리니 어느 시에 네게 임할는지 네가 알지 못하리라"},
-        {c:3, v:4, t:"그러나 사데에 그 옷을 더럽히지 아니한 자 몇 명이 네게 있어 흰 옷을 입고 나와 함께 다니리니 그들은 합당한 자인 연고라"},
+        {c:3, v:4, t:"그러나 사데에 그 신을 더럽히지 아니한 자 몇 명이 네게 있어 흰 옷을 입고 나와 함께 다니리니 그들은 합당한 자인 연고라"},
         {c:3, v:5, t:"이기는 자는 이와 같이 흰 옷을 입을 것이요 내가 그 이름을 생명책에서 반드시 흐리지 아니하고 그 이름을 내 아버지 앞과 그 천사들 앞에서 증거하리라"},
         {c:3, v:6, t:"귀 있는 자는 성령이 교회들에게 하시는 말씀을 들을찌어다"},
         {c:3, v:7, t:"빌라델비아 교회의 사자에게 편지하기를 거룩하고 진실하사 다윗의 열쇠를 가지신 이 곧 열면 닫을 사람이 없고 닫으면 열 사람이 없는 그이가 가라사대"},
@@ -696,7 +701,7 @@
         unlockedStage: 1, gold: 0, attackPower: 1, 
         slowItems: 3, lightnings: 0, trumpets: 0, bowls: 0, 
         characters: [], equippedChar: null,
-        unlockedVerses: [], bestInfinityScore: 0, verseCounts: {},
+        unlockedVerses: [], bestInfinityScore: 0, bestBossScore: 0, verseCounts: {},
         energy: 0, lives: 0
     };
     let saveData;
@@ -708,6 +713,7 @@
     }
     if (!saveData.unlockedVerses) saveData.unlockedVerses = [];
     if (!saveData.bestInfinityScore) saveData.bestInfinityScore = 0;
+    if (!saveData.bestBossScore) saveData.bestBossScore = 0;
     if (!saveData.verseCounts) saveData.verseCounts = {};
     if (saveData.energy === undefined) saveData.energy = 0;
     if (saveData.lives === undefined) saveData.lives = 0;
@@ -770,7 +776,7 @@
         document.getElementById('btn-export-save').addEventListener('click', exportSave);
         document.getElementById('file-import-save').addEventListener('change', importSave);
         document.getElementById('btn-result-main').addEventListener('click', () => { document.getElementById('screen-result').classList.add('hidden'); renderStageGrid(); document.getElementById('screen-start').classList.remove('hidden'); });
-        document.getElementById('btn-result-next').addEventListener('click', () => { document.getElementById('screen-result').classList.add('hidden'); if (playingStageId === 'infinity') startStage('infinity'); else if (playingStageId < 10) startStage(playingStageId + 1); else document.getElementById('screen-start').classList.remove('hidden'); });
+        document.getElementById('btn-result-next').addEventListener('click', () => { document.getElementById('screen-result').classList.add('hidden'); if (playingStageId === 'infinity') startStage('infinity'); else if (playingStageId === 'boss') startStage('boss'); else if (playingStageId < 10) startStage(playingStageId + 1); else document.getElementById('screen-start').classList.remove('hidden'); });
         
         document.getElementById('btn-buy-atk').addEventListener('click', () => buyItem('atk'));
         document.getElementById('btn-buy-slow').addEventListener('click', () => buyItem('slow'));
@@ -840,12 +846,28 @@
             stageGrid.appendChild(btn);
         }
         
-        // 💡 11단계(무한돌파) 조건 체크가 정상 작동하도록!
+        // 💡 무한 돌파 버튼 (10스테이지 전에는 🔒잠금 형태로 노출)
+        const infBtn = document.createElement('button'); 
+        infBtn.className = 'stage-btn infinity' + (saveData.unlockedStage > 10 ? '' : ' locked');
         if(saveData.unlockedStage > 10) {
-            const infBtn = document.createElement('button'); infBtn.className = 'stage-btn infinity';
             infBtn.innerHTML = `🔥무한돌파<br><span style="font-size:0.75rem; font-weight:normal;">최고: ${saveData.bestInfinityScore}</span>`;
-            infBtn.onclick = () => startStage('infinity'); stageGrid.appendChild(infBtn);
+            infBtn.onclick = () => startStage('infinity');
+        } else {
+            infBtn.innerHTML = `🔒무한돌파<br><span style="font-size:0.75rem; font-weight:normal; color:#aaa;">(10단계 클리어)</span>`;
         }
+        stageGrid.appendChild(infBtn);
+        
+        // 💡 보스 모드 버튼 (10스테이지 전에는 🔒잠금 형태로 노출)
+        const bossBtn = document.createElement('button'); 
+        bossBtn.className = 'stage-btn boss-mode' + (saveData.unlockedStage > 10 ? '' : ' locked');
+        if(saveData.unlockedStage > 10) {
+            bossBtn.innerHTML = `👹보스전<br><span style="font-size:0.75rem; font-weight:normal;">최고: ${saveData.bestBossScore || 0}</span>`;
+            bossBtn.onclick = () => startStage('boss');
+        } else {
+            bossBtn.innerHTML = `🔒보스전<br><span style="font-size:0.75rem; font-weight:normal; color:#aaa;">(10단계 클리어)</span>`;
+        }
+        stageGrid.appendChild(bossBtn);
+        
         updateRangeSelector();
     }
     
@@ -961,8 +983,10 @@
         const quizTypeEl = document.querySelector('input[name="quiz-type"]:checked');
         currentQuizType = quizTypeEl ? quizTypeEl.value : 'number';
         
-        if (stageId === 'infinity') { currentStageTarget = Infinity; } 
-        else {
+        // 💡 무한, 보스 모드 분기 처리
+        if (stageId === 'infinity' || stageId === 'boss') { 
+            currentStageTarget = Infinity; 
+        } else {
             currentStageObj = stageConfig.find(s => s.id === stageId);
             currentStageTarget = currentStageObj.target; 
             if(saveData.equippedChar === 'c1') currentStageTarget = Math.ceil(currentStageTarget / 2);
@@ -974,7 +998,7 @@
         chosenWeapon = document.querySelector('input[name="start-weapon"]:checked').value; 
         currentDifficulty = document.querySelector('input[name="difficulty"]:checked').value;
         
-        if (stageId !== 'infinity' && stageId <= 6) {
+        if (stageId !== 'infinity' && stageId !== 'boss' && stageId <= 6) {
             filteredData = bibleData.filter(d => d.c === stageId);
             setTimeout(() => { showFloatingText(`계시록 ${stageId}장 진행 중`, gameArea.clientWidth/2, gameArea.clientHeight/2, 'floating-text', 'var(--gold)'); }, 500);
         } else {
@@ -996,6 +1020,11 @@
         monsters.forEach(m => m.el.remove()); monsters = []; arrows.forEach(a => a.el.remove()); arrows = [];
         document.getElementById('boss-warning').style.display = 'none';
         
+        // 보스 모드일 때 무서운 경고 문구 띄우기
+        if (stageId === 'boss') {
+            setTimeout(() => { showFloatingText(`☠️ 보스 러시 시작 ☠️`, gameArea.clientWidth/2, gameArea.clientHeight/2, 'floating-text', 'red'); }, 500);
+        }
+
         updateInGameUI(); nextQuiz(); lastTime = performance.now(); requestAnimationFrame(gameLoop);
     }
 
@@ -1017,26 +1046,35 @@
         const wrongNotesArea = document.getElementById('wrong-notes-area');
         
         let extraText = "";
-        if (playingStageId === 'infinity') {
-            title.innerText = "무한 돌파 종료"; title.style.background = "linear-gradient(to right, #ef4444, #fca5a5)"; title.style.webkitBackgroundClip = "text";
-            if (killedCount > saveData.bestInfinityScore) { saveData.bestInfinityScore = killedCount; extraText = `<br><span style="color:#10b981; font-weight:bold;">🎉 신기록 달성!</span>`; }
+        
+        if (playingStageId === 'infinity' || playingStageId === 'boss') {
+            let modeName = playingStageId === 'infinity' ? "무한 돌파" : "보스전";
+            title.innerText = `${modeName} 종료`; title.style.background = playingStageId === 'infinity' ? "linear-gradient(to right, #ef4444, #fca5a5)" : "linear-gradient(to right, #7e22ce, #e879f9)"; title.style.webkitBackgroundClip = "text";
+            
+            // 신기록 갱신 로직
+            if (playingStageId === 'infinity' && killedCount > saveData.bestInfinityScore) { 
+                saveData.bestInfinityScore = killedCount; extraText = `<br><span style="color:#10b981; font-weight:bold;">🎉 신기록 달성!</span>`; 
+            } else if (playingStageId === 'boss' && killedCount > saveData.bestBossScore) {
+                saveData.bestBossScore = killedCount; extraText = `<br><span style="color:#10b981; font-weight:bold;">🎉 신기록 달성!</span>`; 
+            }
+            
             desc.innerHTML = `최종 처치 수: <span style="color:red; font-weight:bold;">${killedCount}</span>${extraText}<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldThisStage} G</span>`;
             saveGame(); renderStageGrid();
             nextBtn.innerText = "다시하기"; nextBtn.style.display = 'inline-block';
+            
         } else if(isClear) {
             title.innerText = "스테이지 클리어!"; title.style.background = "linear-gradient(to right, #10b981, #34d399)"; title.style.webkitBackgroundClip = "text";
             let diffText = currentDifficulty === 'normal' ? '<br><span style="color:#10b981; font-size:0.9rem;">(실전 모드 보너스 적용)</span>' : '';
             desc.innerHTML = `성벽 방어 성공!<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldThisStage} G</span>${diffText}`;
             
-            // 💡 [버그 수정] 10스테이지를 깨면 무한 모드(11)가 열리도록 <= 10 으로 수정했습니다!
-            if(playingStageId !== 'infinity' && playingStageId >= saveData.unlockedStage && playingStageId <= 10) { 
+            if(playingStageId >= saveData.unlockedStage && playingStageId <= 10) { 
                 saveData.unlockedStage = playingStageId + 1; 
                 saveGame(); renderStageGrid(); 
             }
             
             if (playingStageId === 10) {
-                desc.innerHTML += `<br><span style="color:#ef4444; font-weight:bold;">🔥 무한 돌파 모드가 개방되었습니다!</span>`;
-                nextBtn.style.display = 'none'; // 10 깨면 무한모드는 메인에서 선택
+                desc.innerHTML += `<br><span style="color:#ef4444; font-weight:bold;">🔥 무한 돌파 / 👹 보스전 모드가 개방되었습니다!</span>`;
+                nextBtn.style.display = 'none'; 
             } else {
                 nextBtn.innerText = "다음 스테이지"; 
                 nextBtn.style.display = 'inline-block';
@@ -1071,34 +1109,47 @@
 
         updateMonsters(deltaTime); updateArrows(deltaTime);
         
-        if (playingStageId === 'infinity' || spawnedCount < currentStageTarget) {
+        // 💡 몹 스폰 시간 로직 (보스 모드 추가)
+        if (playingStageId === 'infinity' || playingStageId === 'boss' || spawnedCount < currentStageTarget) {
             spawnTimer += (deltaTime * gameSpeedMultiplier);
             let rate;
-            if (playingStageId === 'infinity') { rate = Math.max(800, 4000 - (spawnedCount * 30)); } 
-            else { rate = 5000 - (currentStageObj.id * 200); if(currentDifficulty === 'practice') rate += 2000; }
+            if (playingStageId === 'infinity') { 
+                rate = Math.max(800, 4000 - (spawnedCount * 30)); 
+            } else if (playingStageId === 'boss') { 
+                rate = Math.max(1200, 5000 - (spawnedCount * 40)); // 보스는 조금 덜 촘촘하게 스폰
+            } else { 
+                rate = 5000 - (currentStageObj.id * 200); if(currentDifficulty === 'practice') rate += 2000; 
+            }
             if (spawnTimer >= rate) { spawnTimer = 0; spawnMonster(); }
         }
         requestAnimationFrame(gameLoop);
     }
 
-    // ✅ 여기서 간격 강제 띄우기(90px)를 완벽하게 적용했습니다.
-    // 💡 [기능 추가] 무한 모드 시 1~10스테이지 이미지 & 보스 랜덤 등장
+    // 💡 몹 생성 로직 (보스 모드 추가)
     function spawnMonster() {
-        if(playingStageId !== 'infinity' && spawnedCount >= currentStageTarget) return;
-        let isBoss, maxHp, speed;
+        if(playingStageId !== 'infinity' && playingStageId !== 'boss' && spawnedCount >= currentStageTarget) return;
+        let isBoss, maxHp, speed, imgStage;
+        
         if (playingStageId === 'infinity') {
             let wave = Math.floor(spawnedCount / 10); 
             isBoss = (spawnedCount > 0 && spawnedCount % 10 === 9); 
             maxHp = 20 + (wave * 20); 
             if (isBoss) maxHp *= 5; 
             speed = 15 + (wave * 3);
+            imgStage = Math.floor(Math.random() * 10) + 1; // 1~10스테이지 이미지 랜덤
+        } else if (playingStageId === 'boss') {
+            let wave = Math.floor(spawnedCount / 5); // 5마리마다 스펙 폭발적 상승
+            isBoss = true; 
+            maxHp = 100 + (wave * 50); // 기본 체력이 매우 높음
+            speed = 12 + (wave * 2);
+            imgStage = Math.floor(Math.random() * 10) + 1; // 1~10스테이지 보스 이미지 랜덤
         } else {
             isBoss = (spawnedCount === currentStageTarget - 1); maxHp = isBoss ? currentStageObj.hpBase * 5 : currentStageObj.hpBase; 
             speed = currentStageObj.spdBase + (Math.random() * 2); 
+            imgStage = playingStageId;
         }
         
         const el = document.createElement('div'); el.className = 'monster' + (isBoss ? ' boss' : '');
-        let imgStage = playingStageId === 'infinity' ? (Math.floor(Math.random() * 10) + 1) : playingStageId;
         let gender = Math.random() > 0.5 ? 'm' : 'f'; let typeStr = isBoss ? 'boss' : gender; 
         
         let walkImgPath = `images/stage${imgStage}_${typeStr}_walk.png`; let hitImgPath = `images/stage${imgStage}_${typeStr}_hit.png`;
@@ -1122,7 +1173,8 @@
         el.style.left = startX + 'px'; 
         gameArea.appendChild(el);
         
-        if(isBoss && playingStageId !== 'infinity') { const warn = document.getElementById('boss-warning'); warn.style.display = 'block'; setTimeout(() => warn.style.display = 'none', 3000); }
+        // 보스 모드에서는 경고문구를 끄기 (계속 번쩍거리면 눈 아픔 방지)
+        if(isBoss && playingStageId !== 'infinity' && playingStageId !== 'boss') { const warn = document.getElementById('boss-warning'); warn.style.display = 'block'; setTimeout(() => warn.style.display = 'none', 3000); }
         if(saveData.equippedChar === 'c4') speed *= 2.0;
         
         monsters.push({ el, hpBg, hpFill, x: startX, y: yOffset, speed, active: true, mhp: maxHp, maxHp: maxHp, isBoss: isBoss, walkImg: walkImgPath, hitImg: hitImgPath });
@@ -1137,9 +1189,9 @@
             m.x -= m.speed * currentSpeedFactor * gameSpeedMultiplier * modeSpeedFactor * (dt / 1000); m.el.style.left = m.x + 'px';
             if (m.x <= CASTLE_X) {
                 takeDamage(m.isBoss ? 30 : 15); m.el.remove(); monsters.splice(i, 1); killedCount++; 
-                if (playingStageId !== 'infinity') checkStageClear(); else updateInGameUI();
-                // ✅ 충돌 시 즉시 스폰
-                if(isPlaying && (playingStageId === 'infinity' || spawnedCount < currentStageTarget)) { spawnTimer = 0; spawnMonster(); }
+                if (playingStageId !== 'infinity' && playingStageId !== 'boss') checkStageClear(); else updateInGameUI();
+                
+                if(isPlaying && (playingStageId === 'infinity' || playingStageId === 'boss' || spawnedCount < currentStageTarget)) { spawnTimer = 0; spawnMonster(); }
             }
         }
     }
@@ -1215,7 +1267,7 @@
 
         monster.active = false; monster.el.style.opacity = '0'; monster.hpBg.style.display = 'none'; spawnParticles(monster.x, parseInt(monster.el.style.bottom), '💥');
         
-        let stageMultiplier = (playingStageId === 'infinity') ? 10 : playingStageId;
+        let stageMultiplier = (playingStageId === 'infinity' || playingStageId === 'boss') ? 10 : playingStageId;
         let earnedGold = monster.isBoss ? (10 + stageMultiplier * 5) : (1 + Math.ceil(stageMultiplier / 2));
         let earnedEnergy = monster.isBoss ? 5 : 1; 
         
@@ -1234,9 +1286,9 @@
         
         setTimeout(() => { 
             monster.el.remove(); let idx = monsters.indexOf(monster); if(idx > -1) monsters.splice(idx, 1); 
-            if (playingStageId !== 'infinity') checkStageClear(); 
-            // ✅ 처치 시 즉시 스폰 유지
-            if(isPlaying && (playingStageId === 'infinity' || spawnedCount < currentStageTarget)) { spawnTimer = 0; spawnMonster(); }
+            if (playingStageId !== 'infinity' && playingStageId !== 'boss') checkStageClear(); 
+            
+            if(isPlaying && (playingStageId === 'infinity' || playingStageId === 'boss' || spawnedCount < currentStageTarget)) { spawnTimer = 0; spawnMonster(); }
         }, 200);
     }
 
@@ -1401,7 +1453,7 @@
 
     function updateInGameUI() {
         hpBar.style.width = hp + '%'; graceFill.style.height = grace + '%'; 
-        if (playingStageId === 'infinity') { progressTxt.innerText = `${killedCount} / ∞`; } else { progressTxt.innerText = `${killedCount}/${currentStageTarget}`; }
+        if (playingStageId === 'infinity' || playingStageId === 'boss') { progressTxt.innerText = `${killedCount} / ∞`; } else { progressTxt.innerText = `${killedCount}/${currentStageTarget}`; }
         
         let weapon = getWeaponInfo(saveData.attackPower); weaponTxt.innerText = weapon.name;
         if (combo >= 2) { comboMultContainer.classList.remove('hidden'); comboMultTxt.innerText = `x${damageMultiplier.toFixed(1)}`; } else { comboMultContainer.classList.add('hidden'); }
