@@ -94,9 +94,8 @@
         .castle { position: absolute; left: 20px; bottom: 20px; font-size: 70px; z-index: 10; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.5)); transition: transform 0.1s; }
         .archer { position: absolute; left: 70px; bottom: 80px; font-size: 35px; z-index: 11; transition: left 0.1s, transform 0.1s; }
         
-        /* 💡 JS에서 동적으로 위치를 제어할 수 있도록 css에서 left, bottom 고정을 해제했습니다. */
         .equipped-char {
-            position: absolute; z-index: 12;
+            position: absolute; left: 25px; bottom: 130px; width: 70px; height: 70px; z-index: 12;
             background-size: contain; background-repeat: no-repeat; background-position: center bottom;
             filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5)); transition: left 0.1s, bottom 0.2s; pointer-events: none;
         }
@@ -662,7 +661,7 @@
         {c:5, v:4, t:"이 책을 펴거나 보거나 하기에 합당한 자가 보이지 않기로 내가 크게 울었더니"},
         {c:5, v:5, t:"장로 중에 하나가 내게 말하되 울지 말라 유대 지파의 사자 다윗의 뿌리가 이기었으니 이 책과 그 일곱 인을 떼시리라 하더라"},
         {c:5, v:6, t:"내가 또 보니 보좌와 네 생물과 장로들 사이에 어린 양이 섰는데 일찍 죽임을 당한것 같더라 일곱 뿔과 일곱 눈이 있으니 이 눈은 온 땅에 보내심을 입은 하나님의 일곱 영이더라"},
-        {c:5, v:7, t:"어린 양이 나아와서 보좌에 앉으신 이의 오른손에서 책을 취하시니라"},
+        {c:5, v:7, t:"어 양이 나아와서 보좌에 앉으신 이의 오른손에서 책을 취하시니라"},
         {c:5, v:8, t:"책을 취하시매 네 생물과 이십 사 장로들이 어린 양 앞에 엎드려 각각 거문고와 향이 가득한 금 대접을 가졌으니 이 향은 성도의 기도들이라"},
         {c:5, v:9, t:"새 노래를 노래하여 가로되 책을 가지시고 그 인봉을 떼기에 합당하시도다 일찍 죽임을 당하사 각 족속과 방언과 백성과 나라 가운데서 사람들을 피로 사서 하나님께 드리시고"},
         {c:5, v:10, t:"저희로 우리 하나님 앞에서 나라와 제사장을 삼으셨으니 저희가 땅에서 왕노릇하리로다 하더라"},
@@ -804,8 +803,8 @@
     let wrongAnswersThisSession = [], gameSpeedMultiplier = 1.0, baseSpeedMultiplier = 1.0;
     let currentQuizType = 'number'; 
     let currentShield = 0, usedC20 = false; 
-    let charX = 70; // 🏃 캐릭터 이동 변수
-    let specialShield = 0; // 🛡️ 돌파전 전용 방어막
+    let charX = 70; 
+    let specialShield = 0; 
     const CASTLE_X = 100; 
     let gachaTimer = 0, gachaInterval, gachaWord = "", gachaVerseText = "";
 
@@ -1048,7 +1047,6 @@
     }
 
     function startStage(stageId) {
-        // 🚫 돌파전 진입 시 영웅 장착 확인
         if (stageId === 'special' && !saveData.equippedChar) {
             alert("영웅을 장착해야 돌파전에 입장할 수 있습니다!");
             return;
@@ -1096,7 +1094,6 @@
         usedC20 = false;
         specialShield = 0; 
         
-        // 🏃 캐릭터 & 성벽 세팅
         const isLandscape = window.innerHeight < 600;
         if (stageId === 'special') {
             document.getElementById('castle').style.display = 'none'; 
@@ -1218,7 +1215,6 @@
             monsters.forEach(m => { if(m.active && m.x <= dmgOriginX + 150) { damageMonster(m, saveData.attackPower * 5); spawnParticles(m.x, parseInt(m.el.style.bottom), '🔥'); } });
         }
 
-        // 🏃 돌파전 (Special Mode) 로직
         if (playingStageId === 'special') {
             let activeMob = monsters.find(m => m.active);
             let isMoving = false;
@@ -1227,13 +1223,11 @@
                 let targetStopX = charX + 150; 
                 if (activeMob.x > targetStopX) {
                     isMoving = true;
-                    // 3초 딜레이 (화면을 3초 만에 횡단하도록 속도 세팅)
                     let moveSpeed = (gameArea.clientWidth / 3.0) * gameSpeedMultiplier * baseSpeedMultiplier;
                     activeMob.x -= moveSpeed * (deltaTime / 1000);
                     if (activeMob.x <= targetStopX) activeMob.x = targetStopX;
                     activeMob.el.style.left = activeMob.x + 'px';
                 } else {
-                    // 정지 후 5초마다 불덩이 공격
                     activeMob.attackTimer = (activeMob.attackTimer || 0) + (deltaTime / 1000) * gameSpeedMultiplier;
                     if (activeMob.attackTimer > 5.0) { 
                         activeMob.attackTimer = 0;
@@ -1288,7 +1282,6 @@
             a.x -= a.speed * gameSpeedMultiplier * (dt / 1000);
             a.el.style.left = a.x + 'px';
             
-            // 영웅에 적중 시 처리
             if (a.x <= charX + 50) { 
                 if (specialShield > 0) {
                     specialShield--; 
@@ -1317,7 +1310,6 @@
         if (playingStageId === 'infinity') {
             let wave = Math.floor(spawnedCount / 10); 
             isBoss = (spawnedCount > 0 && spawnedCount % 10 === 9); 
-            // 💡 무한모드 체력 11배 상향
             maxHp = (20 + (wave * 20)) * 11; 
             if (isBoss) maxHp *= 5; 
             speed = 15 + (wave * 1);
@@ -1335,7 +1327,9 @@
         } else {
             isBoss = (spawnedCount === currentStageTarget - 1); 
             maxHp = isBoss ? currentStageObj.hpBase * 5 : currentStageObj.hpBase; 
-            speed = currentStageObj.spdBase + (Math.random() * 2); 
+            
+            // 💡 [핵심] 랜덤 오차 제거! 완벽한 기차놀이 정렬
+            speed = currentStageObj.spdBase; 
             imgStage = playingStageId;
         }
 
@@ -1410,7 +1404,6 @@
             startX = sourceX; startY = sourceY; 
         } else { 
             if (playingStageId === 'special' && saveData.equippedChar) {
-                // 🏃 영웅 캐릭터에서 발사
                 let charRect = equippedCharEl.getBoundingClientRect(); let gameAreaRect = gameArea.getBoundingClientRect(); 
                 startX = charRect.right - gameAreaRect.left - 20; startY = gameAreaRect.bottom - charRect.top - 40; 
                 equippedCharEl.style.transform = 'scale(1.1) rotate(-15deg)'; setTimeout(() => equippedCharEl.style.transform = 'scale(1) rotate(0deg)', 150);
@@ -1612,10 +1605,9 @@
                 targets.forEach(m => { spawnParticles(m.x, parseInt(m.el.style.bottom), '⚡'); damageMonster(m, 100); });
             }
 
-            // 🛡️ 돌파전 방어막 생성
             if (playingStageId === 'special') {
                 specialShield = 1;
-                showFloatingText("🛡️ 방어막 생성!", charX, 150, 'floating-text', '#3b82f6');
+                showFloatingText("🛡️ 방어막 충전!", charX, 150, 'floating-text', '#3b82f6');
             }
             
             let verseId = `${currentQuiz.c}-${currentQuiz.v}`;
