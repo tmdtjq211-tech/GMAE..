@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>요한계시록 진리의 성벽</title>
+    <title>요한계시록 진리의 성벽 & 돌파전</title>
     <style>
         :root {
             --primary: #4f46e5;
@@ -76,12 +76,12 @@
         @keyframes flashWarning { 0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 0.3; transform: translate(-50%, -50%) scale(1.1); } }
         
         .castle { position: absolute; left: 20px; bottom: 20px; font-size: 70px; z-index: 10; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.5)); transition: transform 0.1s; }
-        .archer { position: absolute; left: 70px; bottom: 80px; font-size: 35px; z-index: 11; transition: transform 0.1s; }
+        .archer { position: absolute; left: 70px; bottom: 80px; font-size: 35px; z-index: 11; transition: left 0.1s, transform 0.1s; }
         
         .equipped-char {
-            position: absolute; z-index: 12;
+            position: absolute; left: 25px; bottom: 130px; width: 70px; height: 70px; z-index: 12;
             background-size: contain; background-repeat: no-repeat; background-position: center bottom;
-            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5)); transition: transform 0.2s; pointer-events: none;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5)); transition: left 0.1s, transform 0.2s; pointer-events: none;
         }
         
         .monster { 
@@ -90,17 +90,21 @@
             transition: filter 0.2s; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
         }
         .monster.boss { width: 130px; height: 130px; z-index: 6; filter: drop-shadow(0 0 10px red); }
+        .monster.elite { filter: drop-shadow(0 0 15px #3b82f6) hue-rotate(180deg) saturate(1.5); transform: scale(1.15); }
+
         .monster-hp-bg {
             position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
             width: 80%; height: 6px; background: rgba(0,0,0,0.7);
             border: 1px solid #fff; border-radius: 3px; display: none; z-index: 20;
         }
         .monster-hp-fill { width: 100%; height: 100%; background: #ef4444; border-radius: 2px; transition: width 0.1s; }
+        
         .arrow { position: absolute; font-size: 24px; z-index: 12; pointer-events: none; }
+        .enemy-arrow { position: absolute; font-size: 28px; z-index: 13; pointer-events: none; filter: drop-shadow(0 0 5px red); }
         
         #skill-bar {
             position: absolute; bottom: 170px; left: 0; width: 100%;
-            display: flex; justify-content: center; gap: 12px; padding: 10px 0; box-sizing: border-box;
+            display: flex; justify-content: center; gap: 8px; padding: 10px 0; box-sizing: border-box;
             background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%); z-index: 15; display: none;
         }
         .skill-btn {
@@ -148,8 +152,8 @@
         .screen::before, .screen::after { content: ''; margin: auto; }
 
         .screen h1 { font-size: 2.2rem; margin-top: 0; margin-bottom: 15px; text-align: center; background: linear-gradient(to right, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.2; }
-        .stage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 8px; margin: 15px 0; width: 100%; max-width: 450px; }
-        .stage-btn { background: #1f2937; border: 2px solid #4b5563; color: white; padding: 12px 0; font-size: 1rem; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+        .stage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(65px, 1fr)); gap: 6px; margin: 15px 0; width: 100%; max-width: 450px; }
+        .stage-btn { background: #1f2937; border: 2px solid #4b5563; color: white; padding: 10px 0; font-size: 0.95rem; font-weight: bold; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
         .stage-btn:hover:not(.locked) { background: var(--primary); transform: scale(1.05); }
         .stage-btn.locked { background: #111; color: #555; border-color: #333; cursor: not-allowed; }
         
@@ -158,6 +162,9 @@
         
         .stage-btn.boss-mode { background: linear-gradient(45deg, #7e22ce, #c026d3); border-color: #e879f9; color: white; animation: pulsePurple 2s infinite; }
         @keyframes pulsePurple { 0% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(168, 85, 247, 0); } 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); } }
+
+        .stage-btn.special-mode { background: linear-gradient(45deg, #059669, #10b981); border-color: #34d399; color: white; animation: pulseGreen 2s infinite; }
+        @keyframes pulseGreen { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
 
         .settings-panel { background: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid #4b5563; }
         .setting-group { margin-bottom: 12px; } .setting-group:last-child { margin-bottom: 0; }
@@ -175,7 +182,7 @@
         .shake { animation: shake 0.3s; }
         .hidden { display: none !important; }
         
-        .shop-content { background: #1f2937; padding: 20px; border-radius: 12px; border: 2px solid var(--gold); width: 100%; max-width: 450px; text-align: center; box-sizing: border-box; }
+        .shop-content { background: #1f2937; padding: 20px; border-radius: 12px; border: 2px solid var(--gold); width: 100%; max-width: 450px; text-align: center; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
         .shop-item { background: #111827; border: 1px solid #4b5563; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         .shop-item-info { text-align: left; flex: 1; }
         .shop-item-title { font-weight: bold; font-size: 0.95rem; color: #fff; margin-bottom: 4px; }
@@ -225,16 +232,16 @@
             
             .castle { font-size: 55px; left: 10px; bottom: 20px; } 
             .archer { font-size: 30px; left: 55px; bottom: 70px; }
-            .equipped-char { transform: scale(0.8); transform-origin: bottom left; left: 15px !important; bottom: 100px !important;}
+            .equipped-char { transform: scale(0.8); transform-origin: bottom left; left: 10px !important; bottom: 100px !important;}
             .monster { width: 65px; height: 65px; } 
             .monster.boss { width: 100px; height: 100px; }
             
             .chapter-badge { padding: 6px 10px; font-size: 1rem; } 
             .number-input { width: 90px; padding: 6px; }
             #quiz-panel { height: 150px; }
-            #skill-bar { bottom: 150px; gap: 8px; }
+            #skill-bar { bottom: 150px; gap: 6px; }
             #game-area { height: calc(100% - 150px); }
-            .skill-btn { width: 40px; height: 40px; font-size: 1.1rem; }
+            .skill-btn { width: 38px; height: 38px; font-size: 1.1rem; }
             
             .hero-grid { grid-template-columns: repeat(2, 1fr); }
             .screen { padding: 30px 10px; }
@@ -255,7 +262,7 @@
             
             #game-area { height: calc(100% - 60px); }
             
-            #skill-bar { bottom: 60px; height: 45px; padding: 4px 8px; justify-content: flex-start; background: none; }
+            #skill-bar { bottom: 60px; height: 45px; padding: 4px 8px; justify-content: flex-start; background: none; gap: 6px;}
             .skill-btn { width: 32px; height: 32px; font-size: 1rem; }
             .skill-badge { padding: 1px 3px; font-size: 0.6rem; }
             
@@ -288,7 +295,7 @@
     <div id="top-bar">
         <div class="top-bar-left">
             <div class="stat-group">
-                <span title="성 체력">🏰</span>
+                <span title="성/캐릭터 체력">🏰</span>
                 <div class="hp-container"><div id="hp-bar"></div><span id="shield-txt" style="position:absolute; right:2px; top:0; color:#60a5fa; font-size:0.6rem; line-height:14px; font-weight:bold;"></span></div>
             </div>
             <div class="stat-group" title="보유 목숨">
@@ -334,6 +341,7 @@
     </div>
     
     <div id="skill-bar">
+        <div class="skill-btn" id="btn-skill-potion" title="물약(V)" style="border-color: #10b981;">💊<div class="skill-badge" id="badge-potion">0</div></div>
         <div class="skill-btn" id="btn-skill-slow" title="모래시계(Shift)">⏳<div class="skill-badge" id="badge-slow">0</div></div>
         <div class="skill-btn" id="btn-skill-light" title="번개(Z)">⚡<div class="skill-badge" id="badge-light">0</div></div>
         <div class="skill-btn" id="btn-skill-trump" title="나팔(X)">🎺<div class="skill-badge" id="badge-trump">0</div></div>
@@ -446,6 +454,14 @@
                 <button class="btn-buy energy-buy" id="btn-buy-life">50 💧</button>
             </div>
             
+            <div class="shop-item" style="border-color: #10b981;">
+                <div class="shop-item-info">
+                    <div class="shop-item-title">💊 체력 물약 (보유: <span id="shop-potion-cnt">0</span>)</div>
+                    <div class="shop-item-desc" style="color: #a7f3d0;">사용 시 즉시 성벽/캐릭터 체력을 30 회복합니다.</div>
+                </div>
+                <button class="btn-buy" id="btn-buy-potion">40 G</button>
+            </div>
+
             <div class="shop-item">
                 <div class="shop-item-info"><div class="shop-item-title">⚔️ 강화 (Lv.<span id="shop-atk-lv">1</span>)</div><div class="shop-item-desc">기본 데미지/타격수 증가</div></div>
                 <button class="btn-buy" id="btn-buy-atk">50 G</button>
@@ -510,11 +526,11 @@
     
     <div id="info-modal" class="screen hidden" style="z-index: 60;">
         <div class="shop-content" style="text-align: left;">
-            <h2 style="color: var(--gold); text-align: center; margin-top: 0;">🧠 게임 가이드 (V11 업데이트)</h2>
-            <p><strong>1. 🐢 배속 시스템 확장:</strong> 시작 전 기본 속도(최대 2배)와 인게임 배속(최대 3배)을 곱해 최대 6배속 플레이가 가능합니다.</p>
-            <p><strong>2. 🔤 빈칸 맞추기 모드:</strong> 설정에서 '빈칸 맞추기'를 선택하면 절 대신 단어를 입력해야 합니다. (이 모드는 자동으로 속도가 더 느려집니다)</p>
-            <p><strong>3. 🦸 영웅 20종 확장:</strong> 만나의 축복, 부활의 기적 등 플레이 스타일을 바꾸는 10종의 신규 영웅이 추가되었습니다.</p>
-            <p><strong>4. 🔥 신규 모드 추가:</strong> 10스테이지 클리어 시 극악의 난이도 <span style="color:red;">[무한 돌파]</span>와 <span style="color:purple;">[보스전]</span> 모드가 개방됩니다.</p>
+            <h2 style="color: var(--gold); text-align: center; margin-top: 0;">🧠 게임 가이드 (V12 업데이트)</h2>
+            <p><strong>1. 🐢 배속 시스템:</strong> 시작 전 기본 속도(최대 2배)와 인게임 배속(최대 3배)을 곱해 최대 6배속 플레이가 가능합니다.</p>
+            <p><strong>2. ✨ 엘리트 몬스터:</strong> 푸른 오라를 뿜는 몬스터는 방어력이 높아 무조건 '3방'을 맞아야 죽습니다. (스킬로는 한 방!)</p>
+            <p><strong>3. 🏃 특별 스테이지 [돌파전]:</strong> 캐릭터가 직접 앞으로 전진하며 고정된 몬스터의 공격을 뚫고 나아갑니다. (5스테이지 클리어 시 개방)</p>
+            <p><strong>4. 💊 체력 회복 물약:</strong> 상점에서 구매하여 위급할 때 체력을 30 회복하세요.</p>
             <hr style="border: 1px solid #4b5563; margin: 15px 0;">
             <h3 style="color: #fff; margin-top: 0; text-align: center;">⚙️ 설정 및 세이브</h3>
             <div class="save-load-container">
@@ -669,6 +685,7 @@
     const badgeLight = document.getElementById('badge-light');
     const badgeTrump = document.getElementById('badge-trump');
     const badgeBowl = document.getElementById('badge-bowl');
+    const badgePotion = document.getElementById('badge-potion');
 
     const CHARACTERS = [
         { id: 'c1', name: '은혜의 수호자', desc: '스테이지별 처치 목표 몬스터 수 절반 감소', img: 'images/char1.png', x: 25, y: 130, w: 70, h: 70 },
@@ -708,26 +725,25 @@
 
     let defaultSave = { 
         unlockedStage: 1, gold: 0, attackPower: 1, 
-        slowItems: 3, lightnings: 0, trumpets: 0, bowls: 0, 
+        slowItems: 3, lightnings: 0, trumpets: 0, bowls: 0, potions: 0, 
         characters: [], equippedChar: null,
         unlockedVerses: [], bestInfinityScore: 0, bestBossScore: 0, verseCounts: {},
         energy: 0, lives: 0
     };
     let saveData;
-    try { saveData = JSON.parse(localStorage.getItem('revDefSaveV11')); } catch(e) { saveData = null; }
+    try { saveData = JSON.parse(localStorage.getItem('revDefSaveV12')); } catch(e) { saveData = null; }
     
     if (!saveData) {
-        let oldSave = JSON.parse(localStorage.getItem('revDefSaveV10'));
+        let oldSave = JSON.parse(localStorage.getItem('revDefSaveV11')) || JSON.parse(localStorage.getItem('revDefSaveV10'));
         saveData = oldSave ? { ...defaultSave, ...oldSave } : defaultSave;
     }
+    if (saveData.potions === undefined) saveData.potions = 0;
     if (!saveData.unlockedVerses) saveData.unlockedVerses = [];
     if (!saveData.bestInfinityScore) saveData.bestInfinityScore = 0;
     if (!saveData.bestBossScore) saveData.bestBossScore = 0;
     if (!saveData.verseCounts) saveData.verseCounts = {};
-    if (saveData.energy === undefined) saveData.energy = 0;
-    if (saveData.lives === undefined) saveData.lives = 0;
 
-    function saveGame() { localStorage.setItem('revDefSaveV11', JSON.stringify(saveData)); }
+    function saveGame() { localStorage.setItem('revDefSaveV12', JSON.stringify(saveData)); }
     function showAutoSaveNotice() { const notice = document.getElementById('auto-save-notice'); notice.style.opacity = 1; setTimeout(() => notice.style.opacity = 0, 2000); }
     
     function exportSave() { 
@@ -757,10 +773,11 @@
     let isPlaying = false, isPaused = false, playingStageId = 1, currentStageObj = null, currentStageTarget = 0, hp = 100;
     let combo = 0, damageMultiplier = 1.0, grace = 0, spawnedCount = 0, killedCount = 0, earnedGoldThisStage = 0; 
     let currentQuiz = null, filteredData = [], currentDifficulty = 'normal', chosenWeapon = 'bow'; 
-    let monsters = [], arrows = [], lastTime = 0, spawnTimer = 0, slowTimer = 0, skill2Hints = 0; 
-    let wrongAnswersThisSession = [], gameSpeedMultiplier = 1.0, baseSpeedMultiplier = 1.0; // 💡 기본 배속 변수 추가
+    let monsters = [], arrows = [], enemyArrows = [], lastTime = 0, spawnTimer = 0, slowTimer = 0, skill2Hints = 0; 
+    let wrongAnswersThisSession = [], gameSpeedMultiplier = 1.0, baseSpeedMultiplier = 1.0;
     let currentQuizType = 'number'; 
     let currentShield = 0, usedC20 = false; 
+    let charX = 70; // 🏃 캐릭터 이동 변수 추가
     const CASTLE_X = 100; 
     let gachaTimer = 0, gachaInterval, gachaWord = "", gachaVerseText = "";
 
@@ -785,7 +802,7 @@
         document.getElementById('btn-export-save').addEventListener('click', exportSave);
         document.getElementById('file-import-save').addEventListener('change', importSave);
         document.getElementById('btn-result-main').addEventListener('click', () => { document.getElementById('screen-result').classList.add('hidden'); renderStageGrid(); document.getElementById('screen-start').classList.remove('hidden'); });
-        document.getElementById('btn-result-next').addEventListener('click', () => { document.getElementById('screen-result').classList.add('hidden'); if (playingStageId === 'infinity') startStage('infinity'); else if (playingStageId === 'boss') startStage('boss'); else if (playingStageId < 10) startStage(playingStageId + 1); else document.getElementById('screen-start').classList.remove('hidden'); });
+        document.getElementById('btn-result-next').addEventListener('click', () => { document.getElementById('screen-result').classList.add('hidden'); if (playingStageId === 'infinity') startStage('infinity'); else if (playingStageId === 'boss') startStage('boss'); else if (playingStageId === 'special') startStage('special'); else if (playingStageId < 10) startStage(playingStageId + 1); else document.getElementById('screen-start').classList.remove('hidden'); });
         
         document.getElementById('btn-buy-atk').addEventListener('click', () => buyItem('atk'));
         document.getElementById('btn-buy-slow').addEventListener('click', () => buyItem('slow'));
@@ -793,14 +810,17 @@
         document.getElementById('btn-buy-trump').addEventListener('click', () => buyItem('trump'));
         document.getElementById('btn-buy-bowl').addEventListener('click', () => buyItem('bowl'));
         document.getElementById('btn-buy-life').addEventListener('click', () => buyItem('life'));
+        document.getElementById('btn-buy-potion').addEventListener('click', () => buyItem('potion')); // 💊 물약 구매
         
         btnSubmit.addEventListener('click', checkAnswer);
         inpVerse.addEventListener('keydown', (e) => { if(isPlaying && e.key === 'Enter') checkAnswer(); });
+        
         document.getElementById('btn-skill-slow').addEventListener('click', useTimeSlow);
         document.getElementById('btn-skill-light').addEventListener('click', useLightning);
         document.getElementById('btn-skill-trump').addEventListener('click', useTrumpet);
         document.getElementById('btn-skill-bowl').addEventListener('click', useBowl);
         document.getElementById('btn-skill-grace').addEventListener('click', useGraceSkill);
+        document.getElementById('btn-skill-potion').addEventListener('click', usePotion); // 💊 물약 사용
         
         document.addEventListener('keydown', (e) => {
             if(!isPlaying || isPaused) return;
@@ -814,6 +834,7 @@
                 if(e.code === 'KeyZ' || e.key === 'z') { e.preventDefault(); useLightning(); }
                 if(e.code === 'KeyX' || e.key === 'x') { e.preventDefault(); useTrumpet(); }
                 if(e.code === 'KeyC' || e.key === 'c') { e.preventDefault(); useBowl(); }
+                if(e.code === 'KeyV' || e.key === 'v') { e.preventDefault(); usePotion(); } // 💊 물약 단축키
             }
         });
     }
@@ -834,6 +855,7 @@
         document.getElementById('life-txt').innerText = saveData.lives;
         atkTxt.innerText = saveData.attackPower; badgeSlow.innerText = saveData.slowItems; 
         badgeLight.innerText = saveData.lightnings; badgeTrump.innerText = saveData.trumpets; badgeBowl.innerText = saveData.bowls;
+        badgePotion.innerText = saveData.potions; // 💊 물약 개수 업데이트
     }
     
     function updateRangeSelector() {
@@ -855,6 +877,7 @@
             stageGrid.appendChild(btn);
         }
         
+        // 💡 무한 돌파 버튼
         const infBtn = document.createElement('button'); 
         infBtn.className = 'stage-btn infinity' + (saveData.unlockedStage > 10 ? '' : ' locked');
         if(saveData.unlockedStage > 10) {
@@ -865,6 +888,7 @@
         }
         stageGrid.appendChild(infBtn);
         
+        // 💡 보스 모드 버튼
         const bossBtn = document.createElement('button'); 
         bossBtn.className = 'stage-btn boss-mode' + (saveData.unlockedStage > 10 ? '' : ' locked');
         if(saveData.unlockedStage > 10) {
@@ -874,6 +898,17 @@
             bossBtn.innerHTML = `🔒보스전<br><span style="font-size:0.75rem; font-weight:normal; color:#aaa;">(10단계 클리어)</span>`;
         }
         stageGrid.appendChild(bossBtn);
+
+        // 💡 특별 스테이지 (돌파전) 버튼 추가 (5단계 클리어 시 개방)
+        const specialBtn = document.createElement('button');
+        specialBtn.className = 'stage-btn special-mode' + (saveData.unlockedStage > 5 ? '' : ' locked');
+        if(saveData.unlockedStage > 5) {
+            specialBtn.innerHTML = `🏃돌파전<br><span style="font-size:0.75rem; font-weight:normal;">목표: 30마리</span>`;
+            specialBtn.onclick = () => startStage('special');
+        } else {
+            specialBtn.innerHTML = `🔒돌파전<br><span style="font-size:0.75rem; font-weight:normal; color:#aaa;">(5단계 클리어)</span>`;
+        }
+        stageGrid.appendChild(specialBtn);
         
         updateRangeSelector();
     }
@@ -898,9 +933,12 @@
         if (!saveData.equippedChar) { equippedCharEl.classList.add('hidden'); } else {
             let charData = CHARACTERS.find(c => c.id === saveData.equippedChar);
             if (charData) {
-                equippedCharEl.style.backgroundImage = `url('${charData.img}')`; equippedCharEl.style.left = charData.x + 'px';
-                equippedCharEl.style.bottom = charData.y + 'px'; equippedCharEl.style.width = charData.w + 'px';
-                equippedCharEl.style.height = charData.h + 'px'; equippedCharEl.classList.remove('hidden');
+                equippedCharEl.style.backgroundImage = `url('${charData.img}')`; 
+                // x 좌표는 인게임에서 실시간으로 업데이트하므로 여기선 기본 세팅만 유지
+                equippedCharEl.style.bottom = charData.y + 'px'; 
+                equippedCharEl.style.width = charData.w + 'px';
+                equippedCharEl.style.height = charData.h + 'px'; 
+                equippedCharEl.classList.remove('hidden');
             }
         }
     }
@@ -965,11 +1003,13 @@
         document.getElementById('shop-light-cnt').innerText = saveData.lightnings; 
         document.getElementById('shop-trump-cnt').innerText = saveData.trumpets; 
         document.getElementById('shop-bowl-cnt').innerText = saveData.bowls;
+        document.getElementById('shop-potion-cnt').innerText = saveData.potions; // 💊
         
         let atkCost = saveData.attackPower * 50; 
         document.getElementById('btn-buy-atk').innerText = `${atkCost} G`; document.getElementById('btn-buy-atk').disabled = (saveData.gold < atkCost); 
         document.getElementById('btn-buy-slow').disabled = (saveData.gold < 30); document.getElementById('btn-buy-light').disabled = (saveData.gold < 20); 
         document.getElementById('btn-buy-trump').disabled = (saveData.gold < 40); document.getElementById('btn-buy-bowl').disabled = (saveData.gold < 80);
+        document.getElementById('btn-buy-potion').disabled = (saveData.gold < 40); // 💊
         document.getElementById('btn-buy-life').disabled = (saveData.energy < 50);
     }
     
@@ -979,6 +1019,7 @@
         else if (type === 'light' && saveData.gold >= 20) { saveData.gold -= 20; saveData.lightnings++; } 
         else if (type === 'trump' && saveData.gold >= 40) { saveData.gold -= 40; saveData.trumpets++; } 
         else if (type === 'bowl' && saveData.gold >= 80) { saveData.gold -= 80; saveData.bowls++; }
+        else if (type === 'potion' && saveData.gold >= 40) { saveData.gold -= 40; saveData.potions++; } // 💊
         else if (type === 'life' && saveData.energy >= 50) { saveData.energy -= 50; saveData.lives++; }
         
         saveGame(); renderTopStats(); updateShopUI();
@@ -987,7 +1028,6 @@
     function startStage(stageId) {
         playingStageId = stageId; 
         
-        // 💡 [추가] 시작 시 기본 배속 설정 불러오기
         const baseSpeedEl = document.querySelector('input[name="base-speed"]:checked');
         baseSpeedMultiplier = baseSpeedEl ? parseFloat(baseSpeedEl.value) : 1.0;
         
@@ -996,6 +1036,8 @@
         
         if (stageId === 'infinity' || stageId === 'boss') { 
             currentStageTarget = Infinity; 
+        } else if (stageId === 'special') {
+            currentStageTarget = 30; // 🏃 돌파전 목표 30마리
         } else {
             currentStageObj = stageConfig.find(s => s.id === stageId);
             currentStageTarget = currentStageObj.target; 
@@ -1008,7 +1050,7 @@
         chosenWeapon = document.querySelector('input[name="start-weapon"]:checked').value; 
         currentDifficulty = document.querySelector('input[name="difficulty"]:checked').value;
         
-        if (stageId !== 'infinity' && stageId !== 'boss' && stageId <= 6) {
+        if (stageId !== 'infinity' && stageId !== 'boss' && stageId !== 'special' && stageId <= 6) {
             filteredData = bibleData.filter(d => d.c === stageId);
             setTimeout(() => { showFloatingText(`계시록 ${stageId}장 진행 중`, gameArea.clientWidth/2, gameArea.clientHeight/2, 'floating-text', 'var(--gold)'); }, 500);
         } else {
@@ -1025,13 +1067,23 @@
         currentShield = (saveData.equippedChar === 'c12') ? 50 : 0;
         usedC20 = false;
         
+        // 🏃 캐릭터 시작 위치 초기화
+        charX = 70;
+        archer.style.left = charX + 'px';
+        if (saveData.equippedChar) equippedCharEl.style.left = (charX - 45) + 'px';
+        
         skill2Hints = (saveData.equippedChar === 'c2' && currentDifficulty === 'normal') ? 3 : 0;
         
-        monsters.forEach(m => m.el.remove()); monsters = []; arrows.forEach(a => a.el.remove()); arrows = [];
+        monsters.forEach(m => m.el.remove()); monsters = []; 
+        arrows.forEach(a => a.el.remove()); arrows = [];
+        enemyArrows.forEach(a => a.el.remove()); enemyArrows = []; // 🏃 적 화살 초기화
+        
         document.getElementById('boss-warning').style.display = 'none';
         
         if (stageId === 'boss') {
             setTimeout(() => { showFloatingText(`☠️ 보스 러시 시작 ☠️`, gameArea.clientWidth/2, gameArea.clientHeight/2, 'floating-text', 'red'); }, 500);
+        } else if (stageId === 'special') {
+            setTimeout(() => { showFloatingText(`🏃 진격의 돌파전 🏃`, gameArea.clientWidth/2, gameArea.clientHeight/2, 'floating-text', '#10b981'); }, 500);
         }
 
         updateInGameUI(); nextQuiz(); lastTime = performance.now(); requestAnimationFrame(gameLoop);
@@ -1056,9 +1108,13 @@
         
         let extraText = "";
         
-        if (playingStageId === 'infinity' || playingStageId === 'boss') {
-            let modeName = playingStageId === 'infinity' ? "무한 돌파" : "보스전";
-            title.innerText = `${modeName} 종료`; title.style.background = playingStageId === 'infinity' ? "linear-gradient(to right, #ef4444, #fca5a5)" : "linear-gradient(to right, #7e22ce, #e879f9)"; title.style.webkitBackgroundClip = "text";
+        if (playingStageId === 'infinity' || playingStageId === 'boss' || playingStageId === 'special') {
+            let modeName = playingStageId === 'infinity' ? "무한 돌파" : (playingStageId === 'boss' ? "보스전" : "돌파전");
+            title.innerText = `${modeName} 종료`; 
+            if (playingStageId === 'infinity') title.style.background = "linear-gradient(to right, #ef4444, #fca5a5)";
+            else if (playingStageId === 'boss') title.style.background = "linear-gradient(to right, #7e22ce, #e879f9)";
+            else title.style.background = "linear-gradient(to right, #059669, #34d399)";
+            title.style.webkitBackgroundClip = "text";
             
             if (playingStageId === 'infinity' && killedCount > saveData.bestInfinityScore) { 
                 saveData.bestInfinityScore = killedCount; extraText = `<br><span style="color:#10b981; font-weight:bold;">🎉 신기록 달성!</span>`; 
@@ -1066,7 +1122,7 @@
                 saveData.bestBossScore = killedCount; extraText = `<br><span style="color:#10b981; font-weight:bold;">🎉 신기록 달성!</span>`; 
             }
             
-            desc.innerHTML = `최종 처치 수: <span style="color:red; font-weight:bold;">${killedCount}</span>${extraText}<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldThisStage} G</span>`;
+            desc.innerHTML = `최종 돌파/처치 수: <span style="color:red; font-weight:bold;">${killedCount}</span>${extraText}<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldThisStage} G</span>`;
             saveGame(); renderStageGrid();
             nextBtn.innerText = "다시하기"; nextBtn.style.display = 'inline-block';
             
@@ -1090,7 +1146,7 @@
             
         } else {
             title.innerText = "방어 실패..."; title.style.background = "linear-gradient(to right, #ef4444, #b91c1c)"; title.style.webkitBackgroundClip = "text";
-            desc.innerHTML = `몬스터가 성벽을 파괴했습니다.<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldThisStage} G</span>`;
+            desc.innerHTML = `몬스터가 방어선을 돌파했습니다.<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldThisStage} G</span>`;
             nextBtn.style.display = 'none';
         }
         
@@ -1111,37 +1167,93 @@
         if(slowTimer > 0) { slowTimer -= (deltaTime / 1000); if(slowTimer <= 0) { slowTimer = 0; document.getElementById('time-slow-overlay').style.display = 'none'; } }
         if(saveData.equippedChar === 'c9') { grace = Math.min(100, grace + (2 * (deltaTime / 1000))); graceFill.style.height = grace + '%'; }
         
+        // C17 화상 데미지 위치 수정 (돌파전 대응)
+        let dmgOriginX = playingStageId === 'special' ? charX : CASTLE_X;
         if(saveData.equippedChar === 'c17' && Math.floor(timestamp/1000) > Math.floor((timestamp-deltaTime)/1000)) {
-            monsters.forEach(m => { if(m.active && m.x <= CASTLE_X + 150) { damageMonster(m, saveData.attackPower * 5); spawnParticles(m.x, parseInt(m.el.style.bottom), '🔥'); } });
+            monsters.forEach(m => { if(m.active && m.x <= dmgOriginX + 150) { damageMonster(m, saveData.attackPower * 5); spawnParticles(m.x, parseInt(m.el.style.bottom), '🔥'); } });
         }
 
-        updateMonsters(deltaTime); updateArrows(deltaTime);
-        
-        // 💡 [수정] 스폰 속도에도 기본 배속(baseSpeedMultiplier)을 곱해서 끊임없이 나오게 설정
-        if (playingStageId === 'infinity' || playingStageId === 'boss' || spawnedCount < currentStageTarget) {
-            spawnTimer += (deltaTime * gameSpeedMultiplier * baseSpeedMultiplier);
-            let rate;
-            if (playingStageId === 'infinity') { 
-                rate = Math.max(800, 4000 - (spawnedCount * 30)); 
-            } else if (playingStageId === 'boss') { 
-                rate = Math.max(1200, 5000 - (spawnedCount * 40)); 
-            } else { 
-                rate = 5000 - (currentStageObj.id * 200); if(currentDifficulty === 'practice') rate += 2000; 
+        // 🏃 돌파전 (Special Mode) 로직
+        if (playingStageId === 'special') {
+            let activeMob = monsters.find(m => m.active);
+            if (activeMob) {
+                // 몹과 캐릭터 거리가 200 이상이면 캐릭터 돌진!
+                if (activeMob.x - charX > 200) {
+                    charX += 200 * (deltaTime / 1000) * gameSpeedMultiplier * baseSpeedMultiplier;
+                } else {
+                    // 몹 앞에 도달하면 정지하고 몹이 공격 시작
+                    activeMob.attackTimer = (activeMob.attackTimer || 0) + (deltaTime / 1000) * gameSpeedMultiplier;
+                    if (activeMob.attackTimer > 2.0) { // 2초마다 불덩이 쏨
+                        activeMob.attackTimer = 0;
+                        shootEnemyArrow(activeMob);
+                    }
+                }
+            } else {
+                // 화면에 몹이 없으면 화면 끝까지 우다다 달려감
+                charX += 300 * (deltaTime / 1000) * gameSpeedMultiplier * baseSpeedMultiplier;
+                if (charX > gameArea.clientWidth) {
+                    charX = 70; // 제자리 리셋
+                    if (killedCount < currentStageTarget) spawnMonster(); // 새 몹 등장!
+                }
             }
-            if (spawnTimer >= rate) { spawnTimer = 0; spawnMonster(); }
+            // 캐릭터 UI 업데이트
+            archer.style.left = charX + 'px';
+            if (saveData.equippedChar) equippedCharEl.style.left = (charX - 45) + 'px';
+            
+            updateEnemyArrows(deltaTime);
+        } else {
+            // 일반 디펜스 모드 스폰
+            let activeCount = monsters.filter(m => m.active).length;
+            while (activeCount < 12 && (playingStageId === 'infinity' || playingStageId === 'boss' || spawnedCount < currentStageTarget)) {
+                spawnMonster();
+                activeCount++;
+            }
+            updateMonsters(deltaTime); 
         }
+
+        updateArrows(deltaTime);
         requestAnimationFrame(gameLoop);
     }
 
+    // 🏃 적이 쏘는 불덩이(화살)
+    function shootEnemyArrow(mob) {
+        const el = document.createElement('div'); el.className = 'enemy-arrow'; el.innerText = '🔥'; 
+        el.style.left = mob.x + 'px'; el.style.bottom = (mob.y + 20) + 'px'; 
+        gameArea.appendChild(el);
+        enemyArrows.push({ el, x: mob.x, y: mob.y + 20, active: true, speed: 400 });
+    }
+
+    function updateEnemyArrows(dt) {
+        for(let i = enemyArrows.length - 1; i >= 0; i--) {
+            let a = enemyArrows[i];
+            if (!a.active) continue;
+            
+            a.x -= a.speed * gameSpeedMultiplier * (dt / 1000);
+            a.el.style.left = a.x + 'px';
+            
+            if (a.x <= charX + 30) { // 캐릭터에 적중
+                takeDamage(15);
+                spawnParticles(charX, a.y, '💥');
+                a.el.remove();
+                enemyArrows.splice(i, 1);
+            } else if (a.x < 0) { // 화면 밖으로 나감
+                a.el.remove();
+                enemyArrows.splice(i, 1);
+            }
+        }
+    }
+
     function spawnMonster() {
-        if(playingStageId !== 'infinity' && playingStageId !== 'boss' && spawnedCount >= currentStageTarget) return;
-        let isBoss, maxHp, speed, imgStage;
+        if(playingStageId !== 'infinity' && playingStageId !== 'boss' && playingStageId !== 'special' && spawnedCount >= currentStageTarget) return;
+        
+        let isBoss = false; 
+        let isElite = false;
+        let maxHp, speed, imgStage;
         
         if (playingStageId === 'infinity') {
             let wave = Math.floor(spawnedCount / 10); 
             isBoss = (spawnedCount > 0 && spawnedCount % 10 === 9); 
-            maxHp = 20 + (wave * 20); 
-            if (isBoss) maxHp *= 5; 
+            maxHp = 20 + (wave * 20); if (isBoss) maxHp *= 5; 
             speed = 15 + (wave * 3);
             imgStage = Math.floor(Math.random() * 10) + 1;
         } else if (playingStageId === 'boss') {
@@ -1150,13 +1262,26 @@
             maxHp = 100 + (wave * 50); 
             speed = 12 + (wave * 2);
             imgStage = Math.floor(Math.random() * 10) + 1;
+        } else if (playingStageId === 'special') {
+            // 🏃 돌파전 몬스터 (체력이 높고 고정되어 있음)
+            maxHp = 60 + (killedCount * 5); 
+            speed = 0; // 고정!
+            imgStage = Math.floor(Math.random() * 10) + 1;
         } else {
-            isBoss = (spawnedCount === currentStageTarget - 1); maxHp = isBoss ? currentStageObj.hpBase * 5 : currentStageObj.hpBase; 
+            isBoss = (spawnedCount === currentStageTarget - 1); 
+            maxHp = isBoss ? currentStageObj.hpBase * 5 : currentStageObj.hpBase; 
             speed = currentStageObj.spdBase + (Math.random() * 2); 
             imgStage = playingStageId;
         }
+
+        // 💡 15% 확률로 엘리트 몹 등장 (보스가 아닐 때만)
+        if (!isBoss && playingStageId !== 'boss' && Math.random() < 0.15) {
+            isElite = true;
+            maxHp = 3; // 3방 컷 쉴드
+        }
         
-        const el = document.createElement('div'); el.className = 'monster' + (isBoss ? ' boss' : '');
+        const el = document.createElement('div'); 
+        el.className = 'monster' + (isBoss ? ' boss' : '') + (isElite ? ' elite' : '');
         let gender = Math.random() > 0.5 ? 'm' : 'f'; let typeStr = isBoss ? 'boss' : gender; 
         
         let walkImgPath = `images/stage${imgStage}_${typeStr}_walk.png`; let hitImgPath = `images/stage${imgStage}_${typeStr}_hit.png`;
@@ -1169,12 +1294,18 @@
         el.style.bottom = yOffset + 'px'; 
         
         let startX = gameArea.clientWidth; 
-        let activeMonsters = monsters.filter(m => m.active);
         
-        if (activeMonsters.length > 0) {
-            let lastMonster = activeMonsters[activeMonsters.length - 1];
-            let gap = isBoss ? 150 : 90;
-            startX = Math.max(startX, lastMonster.x + gap);
+        if (playingStageId === 'special') {
+            // 🏃 돌파전: 몹은 화면 오른쪽 끝에 하나씩만 스폰
+            startX = gameArea.clientWidth - 150;
+        } else {
+            // 일반 모드: 12마리 줄세우기
+            let activeMonsters = monsters.filter(m => m.active);
+            if (activeMonsters.length > 0) {
+                let lastMonster = activeMonsters[activeMonsters.length - 1];
+                let gap = isBoss ? 150 : 80;
+                startX = Math.max(startX, lastMonster.x + gap);
+            }
         }
         
         el.style.left = startX + 'px'; 
@@ -1183,7 +1314,7 @@
         if(isBoss && playingStageId !== 'infinity' && playingStageId !== 'boss') { const warn = document.getElementById('boss-warning'); warn.style.display = 'block'; setTimeout(() => warn.style.display = 'none', 3000); }
         if(saveData.equippedChar === 'c4') speed *= 2.0;
         
-        monsters.push({ el, hpBg, hpFill, x: startX, y: yOffset, speed, active: true, mhp: maxHp, maxHp: maxHp, isBoss: isBoss, walkImg: walkImgPath, hitImg: hitImgPath });
+        monsters.push({ el, hpBg, hpFill, x: startX, y: yOffset, speed, active: true, mhp: maxHp, maxHp: maxHp, isBoss: isBoss, isElite: isElite, walkImg: walkImgPath, hitImg: hitImgPath, attackTimer: 0 });
         spawnedCount++; updateInGameUI();
     }
 
@@ -1194,15 +1325,12 @@
         for (let i = monsters.length - 1; i >= 0; i--) {
             let m = monsters[i]; if(!m.active) continue;
             
-            // 💡 [핵심] 기본 몬스터 속도에 baseSpeedMultiplier 곱하기!
             m.x -= m.speed * currentSpeedFactor * gameSpeedMultiplier * baseSpeedMultiplier * modeSpeedFactor * (dt / 1000); 
             m.el.style.left = m.x + 'px';
             
             if (m.x <= CASTLE_X) {
                 takeDamage(m.isBoss ? 30 : 15); m.el.remove(); monsters.splice(i, 1); killedCount++; 
                 if (playingStageId !== 'infinity' && playingStageId !== 'boss') checkStageClear(); else updateInGameUI();
-                
-                if(isPlaying && (playingStageId === 'infinity' || playingStageId === 'boss' || spawnedCount < currentStageTarget)) { spawnTimer = 0; spawnMonster(); }
             }
         }
     }
@@ -1217,8 +1345,10 @@
 
     function createArrow(targetMonster, projectileEmoji, sourceX = null, sourceY = null) {
         const el = document.createElement('div'); el.className = 'arrow'; el.innerText = projectileEmoji; let startX, startY;
-        if(sourceX !== null && sourceY !== null) { startX = sourceX; startY = sourceY; } 
-        else { 
+        if(sourceX !== null && sourceY !== null) { 
+            startX = sourceX; startY = sourceY; 
+        } else { 
+            // 🏃 돌파전 캐릭터 이동 반영 (archer 요소가 기준이 됨!)
             let archerRect = archer.getBoundingClientRect(); let gameAreaRect = gameArea.getBoundingClientRect(); 
             startX = archerRect.right - gameAreaRect.left; startY = gameAreaRect.bottom - archerRect.top - 30; 
         }
@@ -1242,7 +1372,6 @@
                 
                 damageMonster(a.target, finalDmg, false, a.isChain);
             } else {
-                // 💡 [수정] 화살 속도도 기본 몹 속도(baseSpeedMultiplier)에 맞춰서 빨라지도록 적용
                 let moveDist = a.speed * gameSpeedMultiplier * baseSpeedMultiplier * (dt / 1000); 
                 a.x += (dx / dist) * moveDist; a.y += (dy / dist) * moveDist;
                 a.el.style.left = a.x + 'px'; a.el.style.bottom = a.y + 'px';
@@ -1252,61 +1381,79 @@
     }
 
     function damageMonster(monster, damage, isSplash = false, isChain = false) {
+        if (!monster.active) return;
+        
+        // 💡 엘리트 몬스터 데미지 계산 로직 (일반 공격은 1, 스킬 공격은 한방)
+        if (monster.isElite) {
+            if (damage < 50) damage = 1; 
+            else damage = monster.mhp;
+        }
+
         if (monster.isBoss && saveData.equippedChar === 'c16') damage = Math.floor(damage * 2.5);
         
         monster.mhp -= damage; monster.hpBg.style.display = 'block'; monster.hpFill.style.width = Math.max(0, (monster.mhp / monster.maxHp * 100)) + '%';
         if (saveData.equippedChar === 'c3') { monster.x = gameArea.clientWidth - 50; }
 
         if (monster.mhp > 0) {
-            monster.el.style.backgroundImage = `url('${monster.hitImg}')`; monster.el.style.filter = monster.isBoss ? 'drop-shadow(0 0 10px red) brightness(1.5)' : 'brightness(1.5) drop-shadow(0 0 5px white)';
-            setTimeout(() => { if(monster.active) { monster.el.style.backgroundImage = `url('${monster.walkImg}')`; monster.el.style.filter = monster.isBoss ? 'drop-shadow(0 0 10px red)' : 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'; } }, 150);
+            monster.el.style.backgroundImage = `url('${monster.hitImg}')`; monster.el.style.filter = monster.isBoss ? 'drop-shadow(0 0 10px red) brightness(1.5)' : (monster.isElite ? 'drop-shadow(0 0 15px #3b82f6) hue-rotate(180deg) brightness(2)' : 'brightness(1.5) drop-shadow(0 0 5px white)');
+            setTimeout(() => { if(monster.active) { monster.el.style.backgroundImage = `url('${monster.walkImg}')`; monster.el.style.filter = monster.isBoss ? 'drop-shadow(0 0 10px red)' : (monster.isElite ? 'drop-shadow(0 0 15px #3b82f6) hue-rotate(180deg) saturate(1.5)' : 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))'); } }, 150);
             showFloatingText(`-${damage}`, monster.x, parseInt(monster.el.style.bottom)+40, 'floating-text', '#fff'); return;
         }
         
-        if (monster.mhp < 0 && saveData.equippedChar === 'c5' && !isSplash) {
-            let overflow = Math.abs(monster.mhp);
-            monsters.forEach(m => { if (m.active && m !== monster && Math.abs(m.x - monster.x) < 150) { damageMonster(m, overflow, true, false); } });
-            spawnParticles(monster.x, parseInt(monster.el.style.bottom), '💥');
-        }
-        if (!isChain && saveData.equippedChar === 'c6' && damage >= monster.maxHp) {
-            let activeMonsters = monsters.filter(m => m.active && m !== monster);
-            if (activeMonsters.length > 0) {
-                let nextTarget = activeMonsters.sort((a,b) => Math.abs(a.x - monster.x) - Math.abs(b.x - monster.x))[0];
-                let wInfo = getWeaponInfo(saveData.attackPower); createArrow(nextTarget, wInfo.emoji, monster.x, parseInt(monster.el.style.bottom));
-            }
-        }
-        if (saveData.equippedChar === 'c7') { hp = Math.min(100, hp + 2); updateInGameUI(); showFloatingText("+2", CASTLE_X, 150, 'floating-text', '#10b981'); }
-
-        monster.active = false; monster.el.style.opacity = '0'; monster.hpBg.style.display = 'none'; spawnParticles(monster.x, parseInt(monster.el.style.bottom), '💥');
-        
-        let stageMultiplier = (playingStageId === 'infinity' || playingStageId === 'boss') ? 10 : playingStageId;
-        let earnedGold = monster.isBoss ? (10 + stageMultiplier * 5) : (1 + Math.ceil(stageMultiplier / 2));
-        let earnedEnergy = monster.isBoss ? 5 : 1; 
-        
-        if (currentDifficulty === 'normal') earnedGold *= 2; 
-        if (saveData.equippedChar === 'c4') earnedGold *= 2;
-        
-        if (gameSpeedMultiplier === 3.0) earnedGold *= 3;
-        else if (gameSpeedMultiplier === 2.0) earnedGold *= 2; 
-        else if (gameSpeedMultiplier === 0.5) earnedGold = Math.max(1, Math.floor(earnedGold * 0.5)); 
-        else if (gameSpeedMultiplier === 0.25) earnedGold = Math.max(1, Math.floor(earnedGold * 0.25)); 
-        
-        saveData.gold += earnedGold; saveData.energy += earnedEnergy; earnedGoldThisStage += earnedGold; renderTopStats(); 
-        
-        showFloatingText(`+${earnedGold}G / +${earnedEnergy}💧`, monster.x, parseInt(monster.el.style.bottom)+40, 'floating-text', 'var(--gold)');
-        killedCount++; updateInGameUI();
-        
-        setTimeout(() => { 
-            monster.el.remove(); let idx = monsters.indexOf(monster); if(idx > -1) monsters.splice(idx, 1); 
-            if (playingStageId !== 'infinity' && playingStageId !== 'boss') checkStageClear(); 
+        if (monster.mhp <= 0) {
+            monster.active = false;
+            monster.el.style.opacity = '0'; monster.hpBg.style.display = 'none'; spawnParticles(monster.x, parseInt(monster.el.style.bottom), '💥');
             
-            if(isPlaying && (playingStageId === 'infinity' || playingStageId === 'boss' || spawnedCount < currentStageTarget)) { spawnTimer = 0; spawnMonster(); }
-        }, 200);
+            // 💡 [자석 리턴] 일반 디펜스 모드일 때만 빈자리 메꾸기
+            if (playingStageId !== 'special') {
+                let gapSize = monster.isBoss ? 150 : 80;
+                monsters.forEach(m => {
+                    if (m.active && m.x > monster.x) {
+                        m.x -= gapSize;
+                        m.el.style.left = m.x + 'px';
+                    }
+                });
+            }
+
+            if (saveData.equippedChar === 'c5' && !isSplash) {
+                let overflow = Math.abs(monster.mhp);
+                monsters.forEach(m => { if (m.active && m !== monster && Math.abs(m.x - monster.x) < 150) { damageMonster(m, overflow, true, false); } });
+            }
+            if (!isChain && saveData.equippedChar === 'c6' && damage >= monster.maxHp) {
+                let activeMonsters = monsters.filter(m => m.active && m !== monster);
+                if (activeMonsters.length > 0) {
+                    let nextTarget = activeMonsters.sort((a,b) => Math.abs(a.x - monster.x) - Math.abs(b.x - monster.x))[0];
+                    let wInfo = getWeaponInfo(saveData.attackPower); createArrow(nextTarget, wInfo.emoji, monster.x, parseInt(monster.el.style.bottom));
+                }
+            }
+            if (saveData.equippedChar === 'c7') { hp = Math.min(100, hp + 2); updateInGameUI(); showFloatingText("+2", charX, 150, 'floating-text', '#10b981'); }
+
+            let stageMultiplier = (playingStageId === 'infinity' || playingStageId === 'boss') ? 10 : (playingStageId === 'special' ? 5 : playingStageId);
+            let earnedGold = monster.isBoss ? (10 + stageMultiplier * 5) : (1 + Math.ceil(stageMultiplier / 2));
+            if (monster.isElite) earnedGold *= 3; 
+            let earnedEnergy = monster.isBoss ? 5 : (monster.isElite ? 2 : 1); 
+            
+            if (currentDifficulty === 'normal') earnedGold *= 2; 
+            if (saveData.equippedChar === 'c4') earnedGold *= 2;
+            if (gameSpeedMultiplier === 3.0) earnedGold *= 3;
+            else if (gameSpeedMultiplier === 2.0) earnedGold *= 2; 
+            else if (gameSpeedMultiplier === 0.5) earnedGold = Math.max(1, Math.floor(earnedGold * 0.5)); 
+            else if (gameSpeedMultiplier === 0.25) earnedGold = Math.max(1, Math.floor(earnedGold * 0.25)); 
+            
+            saveData.gold += earnedGold; saveData.energy += earnedEnergy; earnedGoldThisStage += earnedGold; renderTopStats(); 
+            showFloatingText(`+${earnedGold}G / +${earnedEnergy}💧`, monster.x, parseInt(monster.el.style.bottom)+40, 'floating-text', 'var(--gold)');
+            killedCount++; updateInGameUI();
+            
+            setTimeout(() => { 
+                monster.el.remove(); let idx = monsters.indexOf(monster); if(idx > -1) monsters.splice(idx, 1); 
+                checkStageClear(); 
+            }, 200);
+        }
     }
 
     function checkStageClear() {
         if (killedCount >= currentStageTarget && isPlaying) {
-            let clearBonus = currentStageObj.id * 10; 
+            let clearBonus = (playingStageId === 'special' ? 50 : currentStageObj.id * 10); 
             if (currentDifficulty === 'normal') clearBonus *= 2;
             if (gameSpeedMultiplier === 3.0) clearBonus *= 3;
             else if (gameSpeedMultiplier === 2.0) clearBonus *= 2; 
@@ -1321,18 +1468,19 @@
             if (amount >= currentShield) { amount -= currentShield; currentShield = 0; } 
             else { currentShield -= amount; amount = 0; }
         }
-        
         hp -= amount; 
         
+        let dmgX = playingStageId === 'special' ? charX : CASTLE_X;
+
         if(hp <= 0) { 
             if(saveData.equippedChar === 'c20' && !usedC20) {
                 hp = 50; usedC20 = true;
-                showFloatingText("👼 기적의 부활!", CASTLE_X, 250, 'combo-text', '#fde047');
+                showFloatingText("👼 기적의 부활!", dmgX, 250, 'combo-text', '#fde047');
                 monsters.forEach(m => { if(m.active) m.x += 300; });
             } 
             else if(saveData.lives > 0) {
                 saveData.lives--; hp = 100; saveGame(); renderTopStats();
-                showFloatingText("❤️ 생명 연장!", CASTLE_X, 200, 'combo-text', '#ef4444');
+                showFloatingText("❤️ 생명 연장!", dmgX, 200, 'combo-text', '#ef4444');
                 monsters.forEach(m => { if(m.active) m.x += 200; });
             } else {
                 hp = 0; endGame(false); 
@@ -1340,7 +1488,21 @@
         }
         
         castle.classList.add('shake'); setTimeout(() => castle.classList.remove('shake'), 300); 
-        showFloatingText(`-${amount}`, CASTLE_X, 150); updateInGameUI(); 
+        showFloatingText(`-${amount}`, dmgX, 150); updateInGameUI(); 
+    }
+
+    // 💊 물약 사용 로직
+    function usePotion() {
+        let txtX = playingStageId === 'special' ? charX : CASTLE_X;
+        if (saveData.potions <= 0) { showFloatingText("물약 없음!", txtX, 150); return; }
+        if (hp >= 100) { showFloatingText("체력 가득 참!", txtX, 150); return; }
+        
+        if(checkItemConsume()) saveData.potions--;
+        hp = Math.min(100, hp + 30);
+        
+        saveGame(); renderTopStats(); updateInGameUI();
+        showFloatingText("💚 체력 회복!", txtX, 150, 'combo-text', '#10b981');
+        spawnParticles(txtX, 80, '✨');
     }
 
     function nextQuiz() {
@@ -1403,8 +1565,9 @@
             grace = Math.min(100, grace + 15 + (combo * 2));
             let weapon = getWeaponInfo(saveData.attackPower); let activeMonsters = monsters.filter(m => m.active); let targets = [];
             
+            let charOffset = playingStageId === 'special' ? charX : CASTLE_X;
             if (chosenWeapon === 'sword') { 
-                let rangeLimit = CASTLE_X + 250; targets = activeMonsters.filter(m => m.x <= rangeLimit).sort((a, b) => a.x - b.x).slice(0, weapon.count); 
+                let rangeLimit = charOffset + 250; targets = activeMonsters.filter(m => m.x <= rangeLimit).sort((a, b) => a.x - b.x).slice(0, weapon.count); 
                 if (targets.length === 0 && activeMonsters.length > 0) showFloatingText("사거리 밖입니다!", gameArea.clientWidth/2, gameArea.clientHeight/2 - 20); 
             } else if (chosenWeapon === 'staff') { targets = activeMonsters.sort((a, b) => b.mhp - a.mhp || a.x - b.x).slice(0, weapon.count); } else { targets = activeMonsters.sort((a, b) => a.x - b.x).slice(0, weapon.count); }
             
@@ -1420,7 +1583,13 @@
             document.getElementById('quiz-panel').classList.add('shake'); document.getElementById('quiz-panel').style.borderColor = '#ef4444';
             setTimeout(()=> { document.getElementById('quiz-panel').classList.remove('shake'); document.getElementById('quiz-panel').style.borderColor = '#374151'; }, 300);
             
-            monsters.forEach(m => { if(m.active) m.x -= 40; }); 
+            // 오답 시 넉백 패널티 (돌파전일 때는 캐릭터가 뒤로 밀림)
+            if (playingStageId === 'special') {
+                charX = Math.max(70, charX - 40);
+            } else {
+                monsters.forEach(m => { if(m.active) m.x -= 40; }); 
+            }
+            
             showFloatingText("오답!", gameArea.clientWidth/2, gameArea.clientHeight/2 - 50); 
             inpVerse.value = ''; inpVerse.focus();
         }
@@ -1434,7 +1603,7 @@
     }
     
     function checkItemConsume() {
-        if(saveData.equippedChar === 'c19' && Math.random() < 0.3) { showFloatingText("✨ 소모 무효!", CASTLE_X, 250, 'floating-text', '#60a5fa'); return false; }
+        if(saveData.equippedChar === 'c19' && Math.random() < 0.3) { showFloatingText("✨ 소모 무효!", charX || CASTLE_X, 250, 'floating-text', '#60a5fa'); return false; }
         return true;
     }
     
