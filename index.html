@@ -81,7 +81,7 @@
         .equipped-char {
             position: absolute; left: 25px; bottom: 130px; width: 70px; height: 70px; z-index: 12;
             background-size: contain; background-repeat: no-repeat; background-position: center bottom;
-            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5)); transition: left 0.1s, transform 0.2s; pointer-events: none;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5)); transition: left 0.1s, transform 0.2s, bottom 0.2s; pointer-events: none;
         }
         
         .monster { 
@@ -529,7 +529,7 @@
             <h2 style="color: var(--gold); text-align: center; margin-top: 0;">🧠 게임 가이드 (V12 업데이트)</h2>
             <p><strong>1. 🐢 배속 시스템:</strong> 시작 전 기본 속도(최대 2배)와 인게임 배속(최대 3배)을 곱해 최대 6배속 플레이가 가능합니다.</p>
             <p><strong>2. ✨ 엘리트 몬스터:</strong> 푸른 오라를 뿜는 몬스터는 방어력이 높아 무조건 '3방'을 맞아야 죽습니다. (스킬로는 한 방!)</p>
-            <p><strong>3. 🏃 특별 스테이지 [돌파전]:</strong> 캐릭터가 직접 앞으로 전진하며 고정된 몬스터의 공격을 뚫고 나아갑니다. (5스테이지 클리어 시 개방)</p>
+            <p><strong>3. 🏃 특별 스테이지 [돌파전]:</strong> 캐릭터가 직접 앞으로 전진하며 고정된 몬스터의 공격을 뚫고 나아갑니다. (5스테이지 클리어 시 개방, <b>영웅 장착 필수</b>)</p>
             <p><strong>4. 💊 체력 회복 물약:</strong> 상점에서 구매하여 위급할 때 체력을 30 회복하세요.</p>
             <hr style="border: 1px solid #4b5563; margin: 15px 0;">
             <h3 style="color: #fff; margin-top: 0; text-align: center;">⚙️ 설정 및 세이브</h3>
@@ -778,6 +778,7 @@
     let currentQuizType = 'number'; 
     let currentShield = 0, usedC20 = false; 
     let charX = 70; // 🏃 캐릭터 이동 변수 추가
+    let specialShield = 0; // 🛡️ 돌파전 전용 1회용 방어막
     const CASTLE_X = 100; 
     let gachaTimer = 0, gachaInterval, gachaWord = "", gachaVerseText = "";
 
@@ -935,7 +936,6 @@
             if (charData) {
                 equippedCharEl.style.backgroundImage = `url('${charData.img}')`; 
                 // x 좌표는 인게임에서 실시간으로 업데이트하므로 여기선 기본 세팅만 유지
-                equippedCharEl.style.bottom = charData.y + 'px'; 
                 equippedCharEl.style.width = charData.w + 'px';
                 equippedCharEl.style.height = charData.h + 'px'; 
                 equippedCharEl.classList.remove('hidden');
@@ -1026,6 +1026,12 @@
     }
 
     function startStage(stageId) {
+        // 🚫 돌파전 진입 시 영웅 장착 확인
+        if (stageId === 'special' && !saveData.equippedChar) {
+            alert("영웅을 장착해야 돌파전에 입장할 수 있습니다!");
+            return;
+        }
+
         playingStageId = stageId; 
         
         const baseSpeedEl = document.querySelector('input[name="base-speed"]:checked');
@@ -1067,10 +1073,24 @@
         currentShield = (saveData.equippedChar === 'c12') ? 50 : 0;
         usedC20 = false;
         
-        // 🏃 캐릭터 시작 위치 초기화
-        charX = 70;
-        archer.style.left = charX + 'px';
-        if (saveData.equippedChar) equippedCharEl.style.left = (charX - 45) + 'px';
+        specialShield = 0; // 🛡️ 돌파전 방어막 초기화
+        
+        // 🏃 캐릭터 시작 위치 초기화 (돌파전은 영웅이 움직임)
+        if (stageId === 'special') {
+            archer.style.display = 'none'; // 일반 궁수 숨김
+            charX = 70;
+            if (saveData.equippedChar) {
+                equippedCharEl.style.left = charX + 'px';
+                equippedCharEl.style.bottom = '40px'; // 몬스터와 같은 지상 높이로 내림
+            }
+        } else {
+            archer.style.display = 'block'; // 일반 궁수 보임
+            charX = 70;
+            if (saveData.equippedChar) {
+                equippedCharEl.style.left = '25px';
+                equippedCharEl.style.bottom = '130px'; // 성벽 위 원래 위치
+            }
+        }
         
         skill2Hints = (saveData.equippedChar === 'c2' && currentDifficulty === 'normal') ? 3 : 0;
         
@@ -1167,7 +1187,6 @@
         if(slowTimer > 0) { slowTimer -= (deltaTime / 1000); if(slowTimer <= 0) { slowTimer = 0; document.getElementById('time-slow-overlay').style.display = 'none'; } }
         if(saveData.equippedChar === 'c9') { grace = Math.min(100, grace + (2 * (deltaTime / 1000))); graceFill.style.height = grace + '%'; }
         
-        // C17 화상 데미지 위치 수정 (돌파전 대응)
         let dmgOriginX = playingStageId === 'special' ? charX : CASTLE_X;
         if(saveData.equippedChar === 'c17' && Math.floor(timestamp/1000) > Math.floor((timestamp-deltaTime)/1000)) {
             monsters.forEach(m => { if(m.active && m.x <= dmgOriginX + 150) { damageMonster(m, saveData.attackPower * 5); spawnParticles(m.x, parseInt(m.el.style.bottom), '🔥'); } });
@@ -1177,29 +1196,24 @@
         if (playingStageId === 'special') {
             let activeMob = monsters.find(m => m.active);
             if (activeMob) {
-                // 몹과 캐릭터 거리가 200 이상이면 캐릭터 돌진!
                 if (activeMob.x - charX > 200) {
                     charX += 200 * (deltaTime / 1000) * gameSpeedMultiplier * baseSpeedMultiplier;
                 } else {
-                    // 몹 앞에 도달하면 정지하고 몹이 공격 시작
+                    // 몹 앞에 도달하면 정지하고 몹이 5초마다 불덩이 쏨
                     activeMob.attackTimer = (activeMob.attackTimer || 0) + (deltaTime / 1000) * gameSpeedMultiplier;
-                    if (activeMob.attackTimer > 2.0) { // 2초마다 불덩이 쏨
+                    if (activeMob.attackTimer > 5.0) { 
                         activeMob.attackTimer = 0;
                         shootEnemyArrow(activeMob);
                     }
                 }
             } else {
-                // 화면에 몹이 없으면 화면 끝까지 우다다 달려감
                 charX += 300 * (deltaTime / 1000) * gameSpeedMultiplier * baseSpeedMultiplier;
                 if (charX > gameArea.clientWidth) {
                     charX = 70; // 제자리 리셋
                     if (killedCount < currentStageTarget) spawnMonster(); // 새 몹 등장!
                 }
             }
-            // 캐릭터 UI 업데이트
-            archer.style.left = charX + 'px';
-            if (saveData.equippedChar) equippedCharEl.style.left = (charX - 45) + 'px';
-            
+            if (saveData.equippedChar) equippedCharEl.style.left = charX + 'px';
             updateEnemyArrows(deltaTime);
         } else {
             // 일반 디펜스 모드 스폰
@@ -1232,11 +1246,17 @@
             a.el.style.left = a.x + 'px';
             
             if (a.x <= charX + 30) { // 캐릭터에 적중
-                takeDamage(15);
-                spawnParticles(charX, a.y, '💥');
+                if (specialShield > 0) {
+                    specialShield--; // 방어막 소모
+                    showFloatingText("🛡️ 방어 성공!", charX, a.y + 40, 'combo-text', '#3b82f6');
+                    updateInGameUI();
+                } else {
+                    takeDamage(15);
+                    spawnParticles(charX, a.y, '💥');
+                }
                 a.el.remove();
                 enemyArrows.splice(i, 1);
-            } else if (a.x < 0) { // 화면 밖으로 나감
+            } else if (a.x < 0) {
                 a.el.remove();
                 enemyArrows.splice(i, 1);
             }
@@ -1253,8 +1273,10 @@
         if (playingStageId === 'infinity') {
             let wave = Math.floor(spawnedCount / 10); 
             isBoss = (spawnedCount > 0 && spawnedCount % 10 === 9); 
-            maxHp = 20 + (wave * 20); if (isBoss) maxHp *= 5; 
-            speed = 15 + (wave * 3);
+            // 💡 무한모드: 기본스테이지 1단계(20)의 11배 강력하게 시작
+            maxHp = (20 + (wave * 20)) * 11; 
+            if (isBoss) maxHp *= 5; 
+            speed = 15 + (wave * 1);
             imgStage = Math.floor(Math.random() * 10) + 1;
         } else if (playingStageId === 'boss') {
             let wave = Math.floor(spawnedCount / 5); 
@@ -1263,9 +1285,9 @@
             speed = 12 + (wave * 2);
             imgStage = Math.floor(Math.random() * 10) + 1;
         } else if (playingStageId === 'special') {
-            // 🏃 돌파전 몬스터 (체력이 높고 고정되어 있음)
+            // 🏃 돌파전 몬스터 (고정형)
             maxHp = 60 + (killedCount * 5); 
-            speed = 0; // 고정!
+            speed = 0; 
             imgStage = Math.floor(Math.random() * 10) + 1;
         } else {
             isBoss = (spawnedCount === currentStageTarget - 1); 
@@ -1274,10 +1296,8 @@
             imgStage = playingStageId;
         }
 
-        // 💡 15% 확률로 엘리트 몹 등장 (보스가 아닐 때만)
         if (!isBoss && playingStageId !== 'boss' && Math.random() < 0.15) {
-            isElite = true;
-            maxHp = 3; // 3방 컷 쉴드
+            isElite = true; maxHp = 3; 
         }
         
         const el = document.createElement('div'); 
@@ -1296,10 +1316,8 @@
         let startX = gameArea.clientWidth; 
         
         if (playingStageId === 'special') {
-            // 🏃 돌파전: 몹은 화면 오른쪽 끝에 하나씩만 스폰
             startX = gameArea.clientWidth - 150;
         } else {
-            // 일반 모드: 12마리 줄세우기
             let activeMonsters = monsters.filter(m => m.active);
             if (activeMonsters.length > 0) {
                 let lastMonster = activeMonsters[activeMonsters.length - 1];
@@ -1348,13 +1366,19 @@
         if(sourceX !== null && sourceY !== null) { 
             startX = sourceX; startY = sourceY; 
         } else { 
-            // 🏃 돌파전 캐릭터 이동 반영 (archer 요소가 기준이 됨!)
-            let archerRect = archer.getBoundingClientRect(); let gameAreaRect = gameArea.getBoundingClientRect(); 
-            startX = archerRect.right - gameAreaRect.left; startY = gameAreaRect.bottom - archerRect.top - 30; 
+            if (playingStageId === 'special' && saveData.equippedChar) {
+                // 🏃 영웅 캐릭터에서 화살 발사
+                let charRect = equippedCharEl.getBoundingClientRect(); let gameAreaRect = gameArea.getBoundingClientRect(); 
+                startX = charRect.right - gameAreaRect.left; startY = gameAreaRect.bottom - charRect.top - 30; 
+                equippedCharEl.style.transform = 'scale(1.2) rotate(-15deg)'; setTimeout(() => equippedCharEl.style.transform = 'scale(1) rotate(0deg)', 150);
+            } else {
+                let archerRect = archer.getBoundingClientRect(); let gameAreaRect = gameArea.getBoundingClientRect(); 
+                startX = archerRect.right - gameAreaRect.left; startY = gameAreaRect.bottom - archerRect.top - 30; 
+                archer.style.transform = 'scale(1.2) rotate(-15deg)'; setTimeout(() => archer.style.transform = 'scale(1) rotate(0deg)', 150);
+            }
         }
         el.style.left = startX + 'px'; el.style.bottom = startY + 'px'; gameArea.appendChild(el);
         arrows.push({ el, x: startX, y: startY, target: targetMonster, active: true, speed: 800, isChain: (sourceX !== null) });
-        if(sourceX === null) { archer.style.transform = 'scale(1.2) rotate(-15deg)'; setTimeout(() => archer.style.transform = 'scale(1) rotate(0deg)', 150); }
     }
 
     function updateArrows(dt) {
@@ -1383,10 +1407,8 @@
     function damageMonster(monster, damage, isSplash = false, isChain = false) {
         if (!monster.active) return;
         
-        // 💡 엘리트 몬스터 데미지 계산 로직 (일반 공격은 1, 스킬 공격은 한방)
         if (monster.isElite) {
-            if (damage < 50) damage = 1; 
-            else damage = monster.mhp;
+            if (damage < 50) damage = 1; else damage = monster.mhp;
         }
 
         if (monster.isBoss && saveData.equippedChar === 'c16') damage = Math.floor(damage * 2.5);
@@ -1404,7 +1426,6 @@
             monster.active = false;
             monster.el.style.opacity = '0'; monster.hpBg.style.display = 'none'; spawnParticles(monster.x, parseInt(monster.el.style.bottom), '💥');
             
-            // 💡 [자석 리턴] 일반 디펜스 모드일 때만 빈자리 메꾸기
             if (playingStageId !== 'special') {
                 let gapSize = monster.isBoss ? 150 : 80;
                 monsters.forEach(m => {
@@ -1491,7 +1512,6 @@
         showFloatingText(`-${amount}`, dmgX, 150); updateInGameUI(); 
     }
 
-    // 💊 물약 사용 로직
     function usePotion() {
         let txtX = playingStageId === 'special' ? charX : CASTLE_X;
         if (saveData.potions <= 0) { showFloatingText("물약 없음!", txtX, 150); return; }
@@ -1548,6 +1568,12 @@
                 let targets = monsters.filter(m=>m.active).sort((a,b)=>a.x-b.x).slice(0,3);
                 targets.forEach(m => { spawnParticles(m.x, parseInt(m.el.style.bottom), '⚡'); damageMonster(m, 100); });
             }
+
+            // 🛡️ 돌파전 정답 시 1회용 방어막 충전
+            if (playingStageId === 'special') {
+                specialShield = 1;
+                showFloatingText("🛡️ 방어막 활성화!", charX, 150, 'floating-text', '#3b82f6');
+            }
             
             let verseId = `${currentQuiz.c}-${currentQuiz.v}`;
             if (!saveData.unlockedVerses.includes(verseId)) {
@@ -1583,7 +1609,6 @@
             document.getElementById('quiz-panel').classList.add('shake'); document.getElementById('quiz-panel').style.borderColor = '#ef4444';
             setTimeout(()=> { document.getElementById('quiz-panel').classList.remove('shake'); document.getElementById('quiz-panel').style.borderColor = '#374151'; }, 300);
             
-            // 오답 시 넉백 패널티 (돌파전일 때는 캐릭터가 뒤로 밀림)
             if (playingStageId === 'special') {
                 charX = Math.max(70, charX - 40);
             } else {
@@ -1640,7 +1665,9 @@
         if (combo >= 2) { comboMultContainer.classList.remove('hidden'); comboMultTxt.innerText = `x${damageMultiplier.toFixed(1)}`; } else { comboMultContainer.classList.add('hidden'); }
         if(hp <= 30) hpBar.style.background = 'red'; else hpBar.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
         
-        if(currentShield > 0) { document.getElementById('shield-txt').innerText = `+${currentShield}`; } else { document.getElementById('shield-txt').innerText = ''; }
+        let shieldStr = currentShield > 0 ? `+${currentShield}` : '';
+        if (playingStageId === 'special' && specialShield > 0) shieldStr += (shieldStr ? ' ' : '') + '🛡️방어막ON';
+        document.getElementById('shield-txt').innerText = shieldStr;
     }
 
     function showFloatingText(text, x, y, customClass = 'floating-text', color = null) { 
