@@ -551,11 +551,11 @@
     
     <div id="info-modal" class="screen hidden" style="z-index: 60;">
         <div class="shop-content" style="text-align: left;">
-            <h2 style="color: var(--gold); text-align: center; margin-top: 0;">🧠 게임 가이드 (V13 업데이트)</h2>
+            <h2 style="color: var(--gold); text-align: center; margin-top: 0;">🧠 게임 가이드 (V15 업데이트)</h2>
             <p><strong>1. 🐢 배속 시스템:</strong> 시작 전 기본 속도(최대 2배)와 인게임 배속(최대 3배)을 곱해 최대 6배속 플레이가 가능합니다.</p>
             <p><strong>2. ✨ 엘리트 몬스터:</strong> 푸른 오라를 뿜는 몬스터는 방어력이 높아 무조건 '3방'을 맞아야 죽습니다. (스킬로는 한 방!)</p>
             <p><strong>3. 🏃 특별 스테이지 [돌파전]:</strong> 영웅이 앞으로 전진하며 고정된 몬스터의 공격을 뚫습니다. 정답을 맞추면 방어막(🛡️)이 생성되어 적의 공격을 1회 무시합니다! (영웅 장착 필수)</p>
-            <p><strong>4. 🔥 무한 돌파 떡상:</strong> 무한 모드의 시작 체력이 1스테이지의 11배(220)부터 시작하는 진정한 지옥 난이도로 변경되었습니다.</p>
+            <p><strong>4. 🔥 돌파전 체력 떡상:</strong> 돌파전 몬스터의 시작 체력이 기본 1스테이지의 11배(220)부터 시작하는 진정한 지옥 난이도로 변경되었습니다.</p>
             <p><strong>5. 💊 체력 회복 물약:</strong> 상점에서 구매하여 위급할 때 체력을 30 회복하세요.</p>
             <hr style="border: 1px solid #4b5563; margin: 15px 0;">
             <h3 style="color: #fff; margin-top: 0; text-align: center;">⚙️ 설정 및 세이브</h3>
@@ -661,7 +661,7 @@
         {c:5, v:4, t:"이 책을 펴거나 보거나 하기에 합당한 자가 보이지 않기로 내가 크게 울었더니"},
         {c:5, v:5, t:"장로 중에 하나가 내게 말하되 울지 말라 유대 지파의 사자 다윗의 뿌리가 이기었으니 이 책과 그 일곱 인을 떼시리라 하더라"},
         {c:5, v:6, t:"내가 또 보니 보좌와 네 생물과 장로들 사이에 어린 양이 섰는데 일찍 죽임을 당한것 같더라 일곱 뿔과 일곱 눈이 있으니 이 눈은 온 땅에 보내심을 입은 하나님의 일곱 영이더라"},
-        {c:5, v:7, t:"어 양이 나아와서 보좌에 앉으신 이의 오른손에서 책을 취하시니라"},
+        {c:5, v:7, t:"어린 양이 나아와서 보좌에 앉으신 이의 오른손에서 책을 취하시니라"},
         {c:5, v:8, t:"책을 취하시매 네 생물과 이십 사 장로들이 어린 양 앞에 엎드려 각각 거문고와 향이 가득한 금 대접을 가졌으니 이 향은 성도의 기도들이라"},
         {c:5, v:9, t:"새 노래를 노래하여 가로되 책을 가지시고 그 인봉을 떼기에 합당하시도다 일찍 죽임을 당하사 각 족속과 방언과 백성과 나라 가운데서 사람들을 피로 사서 하나님께 드리시고"},
         {c:5, v:10, t:"저희로 우리 하나님 앞에서 나라와 제사장을 삼으셨으니 저희가 땅에서 왕노릇하리로다 하더라"},
@@ -757,10 +757,10 @@
         energy: 0, lives: 0
     };
     let saveData;
-    try { saveData = JSON.parse(localStorage.getItem('revDefSaveV13')); } catch(e) { saveData = null; }
+    try { saveData = JSON.parse(localStorage.getItem('revDefSaveV14')); } catch(e) { saveData = null; }
     
     if (!saveData) {
-        let oldSave = JSON.parse(localStorage.getItem('revDefSaveV12')) || JSON.parse(localStorage.getItem('revDefSaveV11'));
+        let oldSave = JSON.parse(localStorage.getItem('revDefSaveV13')) || JSON.parse(localStorage.getItem('revDefSaveV12'));
         saveData = oldSave ? { ...defaultSave, ...oldSave } : defaultSave;
     }
     if (saveData.potions === undefined) saveData.potions = 0;
@@ -769,7 +769,7 @@
     if (!saveData.bestBossScore) saveData.bestBossScore = 0;
     if (!saveData.verseCounts) saveData.verseCounts = {};
 
-    function saveGame() { localStorage.setItem('revDefSaveV13', JSON.stringify(saveData)); }
+    function saveGame() { localStorage.setItem('revDefSaveV14', JSON.stringify(saveData)); }
     function showAutoSaveNotice() { const notice = document.getElementById('auto-save-notice'); notice.style.opacity = 1; setTimeout(() => notice.style.opacity = 0, 2000); }
     
     function exportSave() { 
@@ -1189,7 +1189,7 @@
             
         } else {
             title.innerText = "방어 실패..."; title.style.background = "linear-gradient(to right, #ef4444, #b91c1c)"; title.style.webkitBackgroundClip = "text";
-            desc.innerHTML = `몬스터가 방어선을 돌파했습니다.<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldThisStage} G</span>`;
+            desc.innerHTML = `몬스터가 방어선을 돌파/파괴했습니다.<br>획득 골드: <span style="color:var(--gold); font-weight:bold;">${earnedGoldThisStage} G</span>`;
             nextBtn.style.display = 'none';
         }
         
@@ -1239,7 +1239,7 @@
                 charX += (gameArea.clientWidth / 3.0) * (deltaTime / 1000) * gameSpeedMultiplier * baseSpeedMultiplier;
                 if (charX > gameArea.clientWidth) {
                     charX = 20; 
-                    if (killedCount < currentStageTarget) spawnMonster(); 
+                    if (killedCount < currentStageTarget) { spawnTimer=0; spawnMonster(); }
                 }
             }
             
@@ -1255,11 +1255,22 @@
             updateEnemyArrows(deltaTime);
             
         } else {
-            let activeCount = monsters.filter(m => m.active).length;
-            while (activeCount < 12 && (playingStageId === 'infinity' || playingStageId === 'boss' || spawnedCount < currentStageTarget)) {
-                spawnMonster();
-                activeCount++;
+            // 💡 타이머 기반 스폰 로직 (절대 겹치지 않음!)
+            spawnTimer += (deltaTime * gameSpeedMultiplier * baseSpeedMultiplier);
+            let rate = 1500;
+            if (playingStageId === 'infinity') { 
+                rate = Math.max(500, 1500 - (spawnedCount * 15)); 
+            } else if (playingStageId === 'boss') { 
+                rate = Math.max(800, 2000 - (spawnedCount * 20)); 
+            } else { 
+                rate = Math.max(600, 1500 - (currentStageObj.id * 50)); 
             }
+            
+            if (spawnTimer >= rate && (playingStageId === 'infinity' || playingStageId === 'boss' || spawnedCount < currentStageTarget)) { 
+                spawnTimer = 0; 
+                spawnMonster(); 
+            }
+            
             updateMonsters(deltaTime); 
         }
 
@@ -1310,7 +1321,8 @@
         if (playingStageId === 'infinity') {
             let wave = Math.floor(spawnedCount / 10); 
             isBoss = (spawnedCount > 0 && spawnedCount % 10 === 9); 
-            maxHp = (20 + (wave * 20)) * 11; 
+            // 💡 무한모드는 기존 체력 공식 그대로 유지!
+            maxHp = 20 + (wave * 20); 
             if (isBoss) maxHp *= 5; 
             speed = 15 + (wave * 1);
             imgStage = Math.floor(Math.random() * 10) + 1;
@@ -1321,14 +1333,13 @@
             speed = 12 + (wave * 2);
             imgStage = Math.floor(Math.random() * 10) + 1;
         } else if (playingStageId === 'special') {
-            maxHp = 60 + (killedCount * 5); 
+            // 💡 돌파전 몬스터 체력을 1스테이지의 11배인 220부터 시작!
+            maxHp = 220 + (killedCount * 10); 
             speed = 0; 
             imgStage = Math.floor(Math.random() * 10) + 1;
         } else {
             isBoss = (spawnedCount === currentStageTarget - 1); 
             maxHp = isBoss ? currentStageObj.hpBase * 5 : currentStageObj.hpBase; 
-            
-            // 💡 [핵심] 랜덤 오차 제거! 완벽한 기차놀이 정렬
             speed = currentStageObj.spdBase; 
             imgStage = playingStageId;
         }
@@ -1462,16 +1473,6 @@
             monster.active = false;
             monster.el.style.opacity = '0'; monster.hpBg.style.display = 'none'; spawnParticles(monster.x, parseInt(monster.el.style.bottom), '💥');
             
-            if (playingStageId !== 'special') {
-                let gapSize = monster.isBoss ? 150 : 80;
-                monsters.forEach(m => {
-                    if (m.active && m.x > monster.x) {
-                        m.x -= gapSize;
-                        m.el.style.left = m.x + 'px';
-                    }
-                });
-            }
-
             if (saveData.equippedChar === 'c5' && !isSplash) {
                 let overflow = Math.abs(monster.mhp);
                 monsters.forEach(m => { if (m.active && m !== monster && Math.abs(m.x - monster.x) < 150) { damageMonster(m, overflow, true, false); } });
@@ -1608,6 +1609,7 @@
             if (playingStageId === 'special') {
                 specialShield = 1;
                 showFloatingText("🛡️ 방어막 충전!", charX, 150, 'floating-text', '#3b82f6');
+                updateInGameUI();
             }
             
             let verseId = `${currentQuiz.c}-${currentQuiz.v}`;
